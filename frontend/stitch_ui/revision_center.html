@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aether OS - Revision Center</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#958e9e",
+                        "on-tertiary-fixed": "#2c0051",
+                        "on-primary": "#3f008d",
+                        "tertiary-fixed-dim": "#ddb7ff",
+                        "error": "#ffb4ab",
+                        "secondary-fixed-dim": "#7bd6d1",
+                        "secondary": "#7bd6d1",
+                        "surface-container-highest": "#343439",
+                        "tertiary": "#ddb7ff",
+                        "on-secondary-fixed-variant": "#00504d",
+                        "primary": "#d3bbff",
+                        "outline-variant": "#4a4453",
+                        "primary-fixed": "#ebddff",
+                        "surface-variant": "#343439",
+                        "background": "#121317",
+                        "inverse-on-surface": "#2f3035",
+                        "on-background": "#e3e2e8",
+                        "surface": "#121317",
+                        "surface-container-lowest": "#0d0e12",
+                        "secondary-fixed": "#98f2ed",
+                        "on-primary-fixed": "#250059",
+                        "on-surface-variant": "#ccc3d5",
+                        "on-error-container": "#ffdad6",
+                        "surface-tint": "#d3bbff",
+                        "on-error": "#690005",
+                        "inverse-primary": "#7043c2",
+                        "on-secondary-container": "#a1fcf7",
+                        "on-primary-fixed-variant": "#5726a8",
+                        "on-tertiary-container": "#e9cdff",
+                        "on-secondary": "#003735",
+                        "surface-container": "#1f1f24",
+                        "surface-dim": "#121317",
+                        "on-surface": "#e3e2e8",
+                        "primary-fixed-dim": "#d3bbff",
+                        "surface-container-high": "#292a2e",
+                        "surface-container-low": "#1a1b20",
+                        "error-container": "#93000a",
+                        "primary-container": "#6f42c1",
+                        "inverse-surface": "#e3e2e8",
+                        "secondary-container": "#007774",
+                        "tertiary-fixed": "#f0dbff",
+                        "on-tertiary-fixed-variant": "#6900b3",
+                        "tertiary-container": "#832ad1",
+                        "on-primary-container": "#e2d0ff",
+                        "surface-bright": "#38393e",
+                        "on-secondary-fixed": "#00201f",
+                        "on-tertiary": "#490080"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-gap": "32px",
+                        "grid-unit": "8px",
+                        "container-max": "1440px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* 3D Flip Utilities */
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        
+        /* Custom Progress Ring Animation */
+        @keyframes stroke-dashoffset {
+            to { stroke-dashoffset: 60; } /* Example filled state */
+        }
+        .animate-progress {
+            animation: stroke-dashoffset 1s ease-out forwards;
+        }
+
+        /* Ambient Background */
+        body {
+            background-image: radial-gradient(circle at 15% 50%, rgba(111, 66, 193, 0.05), transparent 50%),
+                              radial-gradient(circle at 85% 30%, rgba(123, 214, 209, 0.05), transparent 50%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md overflow-x-hidden selection:bg-primary/30 selection:text-primary">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col gap-4 p-6 bg-surface/60 backdrop-blur-md h-screen w-64 fixed left-0 top-0 border-r border-white/10 shadow-2xl shadow-primary/20 z-50">
+<!-- Brand Header -->
+<div class="flex items-center gap-4 mb-8">
+<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-tertiary p-[1px]">
+<img alt="User Profile Avatar" class="w-full h-full object-cover rounded-xl" data-alt="A highly detailed, sleek 3D rendered avatar of a futuristic AI core, featuring glowing purple and teal circuits on a dark glass background, representing an advanced digital assistant." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5cbv-edVkodRcIkSpDJp9Vic_WEx6Vx2AtTAXj8rI4tlqBrCFcw0ydWrOrZWmNIEVXERkbZPQBO5m5jIpjTSrxtWiyaX-vDbeDKL3FWmPFNHyrOMFTkHRLINVWqiXoYXLQbdTHvrWRXO9TJ3RAqSyOBVV-GeETPAO-7fLwnVo2rIDcHjm7-tAtOTfiyCz8P44rLjAiB9bDFtGsBWjFepfeo0Ae49CBo45IB3RdJX2Tf2Jd5QiEagK"/>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Aether Mind</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">AI Second Brain</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:scale-105 transition-transform duration-200 cursor-pointer active:scale-95 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:scale-105 transition-transform duration-200 cursor-pointer active:scale-95 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="auto_stories">auto_stories</span>
+<span class="font-label-md text-label-md">Library</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:scale-105 transition-transform duration-200 cursor-pointer active:scale-95 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span>
+<span class="font-label-md text-label-md">AI Chat</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:scale-105 transition-transform duration-200 cursor-pointer active:scale-95 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="quiz">quiz</span>
+<span class="font-label-md text-label-md">Exam Center</span>
+</a>
+<!-- Active Tab -->
+<a class="flex items-center gap-4 px-4 py-3 text-primary bg-primary/10 rounded-xl hover:scale-105 transition-transform duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu" data-weight="fill" style="font-variation-settings: 'FILL' 1;">history_edu</span>
+<span class="font-label-md text-label-md">Revision Center</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:scale-105 transition-transform duration-200 cursor-pointer active:scale-95 rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+</div>
+</nav>
+<!-- TopNavBar -->
+<header class="hidden md:flex justify-between items-center h-16 px-margin-desktop ml-64 bg-surface/40 backdrop-blur-xl fixed top-0 right-0 w-[calc(100%-16rem)] z-40 border-b border-white/5 shadow-sm">
+<div class="flex items-center">
+<span class="font-headline-md text-headline-md font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-tertiary">Aether OS</span>
+</div>
+<div class="flex items-center gap-6">
+<!-- Search Bar (on_left configuration per JSON) -->
+<div class="relative group focus-within:ring-2 focus-within:ring-secondary/50 rounded-full transition-all duration-300">
+<div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+<span class="material-symbols-outlined text-on-surface-variant group-focus-within:text-secondary transition-colors" data-icon="search">search</span>
+</div>
+<input class="bg-surface-container-high/50 border border-white/10 text-on-surface font-label-md text-label-md rounded-full pl-12 pr-6 py-2 w-64 focus:outline-none focus:border-secondary/50 focus:bg-surface-container-high transition-all" placeholder="Search knowledge base..." type="text"/>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-high">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full ml-2 border border-white/10 overflow-hidden cursor-pointer hover:border-primary transition-colors">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A minimalist digital portrait of a user profile, featuring soft volumetric lighting and a subtle neon purple rim light against a dark charcoal background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGmvYF3hw_EzUw_amyEDhVCrnlAzQuRBOuofcESoFBQM8h3wwsTOrSbAIAxUFa7Uz3el7qi45m0zVIdMLaaxZ4ibdGm86bYF96lEzCCv039whwhW5jvngcImtMIVYozUgqCh6EzwQF_NJlHFE2nTjyH9ugzzNDt9dr8_ysMqdww14PFTQi1rAvlkx_tq-O9AoRJMnhCi08VrFHWH-kNYbnl1AdEvzgCba09M879vrtLPLBtgTbh76O"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 mt-16 p-gutter min-h-[calc(100vh-4rem)] flex flex-col relative items-center justify-center">
+<!-- Ambient Depth Layers -->
+<div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+<div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+<!-- Daily Goal Progress Ring -->
+<div class="absolute top-8 right-8 flex items-center gap-5 bg-surface-container-high/80 backdrop-blur-xl p-4 pr-6 rounded-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+<div class="relative w-14 h-14">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<!-- Background Circle -->
+<path class="text-surface-container-lowest" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<!-- Progress Circle -->
+<path class="text-secondary transition-all duration-1000 ease-out animate-progress" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="100, 100" stroke-dashoffset="100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-label-md text-label-md text-on-surface">40%</span>
+</div>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-on-surface">Daily Review</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mt-0.5">24 / 60 Cards</p>
+</div>
+</div>
+<!-- Spaced Repetition Core Area -->
+<div class="w-full max-w-3xl flex flex-col items-center gap-12 mt-12">
+<!-- Context Chip -->
+<div class="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px]" data-icon="memory">memory</span>
+                Advanced Machine Learning
+            </div>
+<!-- Flashcard 3D Container -->
+<div class="perspective-1000 w-full h-[400px] cursor-pointer group" onclick="this.querySelector('.card-inner').classList.toggle('rotate-y-180'); document.getElementById('feedback-controls').classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');">
+<div class="card-inner relative w-full h-full transition-transform duration-700 transform-style-3d shadow-2xl shadow-primary/5 rounded-[2rem]">
+<!-- Front of Card (Question) -->
+<div class="absolute inset-0 backface-hidden bg-surface-container/60 backdrop-blur-xl rounded-[2rem] border border-white/10 flex flex-col items-center justify-center p-12 text-center overflow-hidden">
+<!-- Subtle corner glow -->
+<div class="absolute -top-12 -left-12 w-32 h-32 bg-primary/20 rounded-full blur-[40px]"></div>
+<h2 class="font-display-lg text-display-lg text-on-surface max-w-xl leading-tight">
+                            Explain the vanishing gradient problem in deep neural networks.
+                        </h2>
+<div class="absolute bottom-8 flex items-center gap-2 text-on-surface-variant/60 font-label-md text-label-md animate-pulse">
+<span class="material-symbols-outlined text-[18px]" data-icon="touch_app">touch_app</span>
+                            Click or tap to reveal
+                        </div>
+</div>
+<!-- Back of Card (Answer) -->
+<div class="absolute inset-0 backface-hidden rotate-y-180 bg-surface-container-high/80 backdrop-blur-xl rounded-[2rem] border border-white/15 flex flex-col items-center justify-center p-12 text-center overflow-hidden">
+<!-- Subtle corner glow -->
+<div class="absolute -bottom-12 -right-12 w-32 h-32 bg-secondary/20 rounded-full blur-[40px]"></div>
+<div class="prose prose-invert max-w-2xl">
+<h3 class="font-headline-lg text-headline-lg text-primary mb-6">Gradient Diminishment</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                                Occurs during backpropagation when training deep networks. Gradients of the loss function approach zero, causing early layer weights to update very slowly or not at all. This prevents the network from learning long-range dependencies.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Feedback Controls (Revealed after flip) -->
+<div class="w-full flex justify-between gap-4 transition-all duration-500 opacity-0 translate-y-4 pointer-events-none" id="feedback-controls">
+<!-- Again (Red/Error) -->
+<button class="flex-1 group relative overflow-hidden bg-surface-container rounded-2xl border border-white/5 hover:border-error/30 transition-all duration-300 p-4 active:scale-95 shadow-lg">
+<div class="absolute inset-0 bg-error/0 group-hover:bg-error/10 transition-colors duration-300"></div>
+<div class="relative flex flex-col items-center gap-1">
+<span class="font-headline-md text-headline-md text-error group-hover:drop-shadow-[0_0_8px_rgba(255,180,171,0.5)] transition-all">Again</span>
+<span class="font-label-md text-label-md text-on-surface-variant/60">&lt; 1m</span>
+</div>
+</button>
+<!-- Hard (Neutral/Surface Variant) -->
+<button class="flex-1 group relative overflow-hidden bg-surface-container rounded-2xl border border-white/5 hover:border-outline/50 transition-all duration-300 p-4 active:scale-95 shadow-lg">
+<div class="absolute inset-0 bg-surface-variant/0 group-hover:bg-surface-variant/50 transition-colors duration-300"></div>
+<div class="relative flex flex-col items-center gap-1">
+<span class="font-headline-md text-headline-md text-on-surface group-hover:text-white transition-all">Hard</span>
+<span class="font-label-md text-label-md text-on-surface-variant/60">6m</span>
+</div>
+</button>
+<!-- Good (Green/Secondary) -->
+<button class="flex-1 group relative overflow-hidden bg-surface-container rounded-2xl border border-white/5 hover:border-secondary/40 transition-all duration-300 p-4 active:scale-95 shadow-lg">
+<div class="absolute inset-0 bg-secondary/0 group-hover:bg-secondary/10 transition-colors duration-300"></div>
+<div class="relative flex flex-col items-center gap-1">
+<span class="font-headline-md text-headline-md text-secondary group-hover:drop-shadow-[0_0_8px_rgba(123,214,209,0.5)] transition-all">Good</span>
+<span class="font-label-md text-label-md text-on-surface-variant/60">10m</span>
+</div>
+</button>
+<!-- Easy (Blue-Purple/Primary) -->
+<button class="flex-1 group relative overflow-hidden bg-surface-container rounded-2xl border border-white/5 hover:border-primary/50 transition-all duration-300 p-4 active:scale-95 shadow-lg">
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/15 transition-colors duration-300"></div>
+<div class="relative flex flex-col items-center gap-1">
+<span class="font-headline-md text-headline-md text-primary group-hover:drop-shadow-[0_0_8px_rgba(211,187,255,0.6)] transition-all">Easy</span>
+<span class="font-label-md text-label-md text-on-surface-variant/60">4d</span>
+</div>
+</button>
+</div>
+</div>
+</main>
+</body></html>

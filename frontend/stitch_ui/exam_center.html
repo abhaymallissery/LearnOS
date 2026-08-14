@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Exam Center - Aether OS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#958e9e",
+                        "on-tertiary-fixed": "#2c0051",
+                        "on-primary": "#3f008d",
+                        "tertiary-fixed-dim": "#ddb7ff",
+                        "error": "#ffb4ab",
+                        "secondary-fixed-dim": "#7bd6d1",
+                        "secondary": "#7bd6d1",
+                        "surface-container-highest": "#343439",
+                        "tertiary": "#ddb7ff",
+                        "on-secondary-fixed-variant": "#00504d",
+                        "primary": "#d3bbff",
+                        "outline-variant": "#4a4453",
+                        "primary-fixed": "#ebddff",
+                        "surface-variant": "#343439",
+                        "background": "#121317",
+                        "inverse-on-surface": "#2f3035",
+                        "on-background": "#e3e2e8",
+                        "surface": "#121317",
+                        "surface-container-lowest": "#0d0e12",
+                        "secondary-fixed": "#98f2ed",
+                        "on-primary-fixed": "#250059",
+                        "on-surface-variant": "#ccc3d5",
+                        "on-error-container": "#ffdad6",
+                        "surface-tint": "#d3bbff",
+                        "on-error": "#690005",
+                        "inverse-primary": "#7043c2",
+                        "on-secondary-container": "#a1fcf7",
+                        "on-primary-fixed-variant": "#5726a8",
+                        "on-tertiary-container": "#e9cdff",
+                        "on-secondary": "#003735",
+                        "surface-container": "#1f1f24",
+                        "surface-dim": "#121317",
+                        "on-surface": "#e3e2e8",
+                        "primary-fixed-dim": "#d3bbff",
+                        "surface-container-high": "#292a2e",
+                        "surface-container-low": "#1a1b20",
+                        "error-container": "#93000a",
+                        "primary-container": "#6f42c1",
+                        "inverse-surface": "#e3e2e8",
+                        "secondary-container": "#007774",
+                        "tertiary-fixed": "#f0dbff",
+                        "on-tertiary-fixed-variant": "#6900b3",
+                        "tertiary-container": "#832ad1",
+                        "on-primary-container": "#e2d0ff",
+                        "surface-bright": "#38393e",
+                        "on-secondary-fixed": "#00201f",
+                        "on-tertiary": "#490080"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-gap": "32px",
+                        "grid-unit": "8px",
+                        "container-max": "1440px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            background-image: radial-gradient(circle at 50% 0%, rgba(111, 66, 193, 0.05) 0%, transparent 50%),
+                              radial-gradient(circle at 100% 100%, rgba(123, 214, 209, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+        
+        /* Glassmorphism utilities */
+        .glass-panel {
+            background: rgba(31, 31, 36, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-panel-heavy {
+            background: rgba(41, 42, 46, 0.8);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 30px rgba(111, 66, 193, 0.1);
+        }
+
+        .bento-card {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+            z-index: 10;
+        }
+        
+        .bento-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle at top left, rgba(211, 187, 255, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .primary-gradient-text {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, theme('colors.primary'), theme('colors.tertiary'));
+        }
+
+        .glow-button {
+            box-shadow: 0 0 20px rgba(111, 66, 193, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .glow-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(111, 66, 193, 0.5);
+        }
+
+        .option-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .option-card:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(56, 57, 62, 0.8);
+        }
+        
+        .option-card.selected {
+            border-color: theme('colors.secondary');
+            background: rgba(0, 119, 116, 0.2);
+            box-shadow: 0 0 15px rgba(123, 214, 209, 0.2);
+        }
+
+        .animated-border {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 2px;
+            background: linear-gradient(90deg, transparent, theme('colors.secondary'), transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            background-size: 200% 100%;
+            animation: borderSlide 2s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .ongoing-quiz:hover .animated-border {
+            opacity: 1;
+        }
+
+        @keyframes borderSlide {
+            0% { background-position: 100% 0; }
+            100% { background-position: -100% 0; }
+        }
+        
+        /* Layout scaffolding for SideNav and TopNav */
+        .page-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 16rem; /* 64px * 4 = 256px = 16rem */
+            padding-top: 4rem; /* 16px * 4 = 64px = 4rem */
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding-top: 0;
+                padding-bottom: 5rem; /* space for bottom nav if it existed */
+            }
+        }
+    </style>
+</head>
+<body class="text-on-background font-body-md antialiased overflow-x-hidden selection:bg-primary selection:text-on-primary">
+
+    {{DATA:COMPONENTS:COMPONENTS_2}}
+
+    <main class="main-content min-h-screen relative z-10" id="main-view">
+<div class="max-w-[1440px] w-full mx-auto px-margin-mobile md:px-margin-desktop py-stack-gap flex flex-col gap-stack-gap">
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pt-8">
+<div class="flex flex-col gap-2">
+<h1 class="font-display-lg text-display-lg text-on-surface">Exam Center</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                        Synthesize your knowledge. Generate dynamic assessments based on your second brain architecture or review past performance analytics.
+                    </p>
+</div>
+<button class="glow-button bg-gradient-to-r from-primary-container to-tertiary-container text-white px-8 py-4 rounded-full font-label-md text-label-md flex items-center gap-2 shrink-0" onclick="toggleActiveQuiz()">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">neurology</span>
+                    Generate New Quiz
+                </button>
+</header>
+<!-- Ongoing Quizzes Section -->
+<section class="flex flex-col gap-6 mt-8">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">update</span>
+                    In Progress
+                </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Ongoing Card 1 -->
+<div class="glass-panel bento-card rounded-xl p-8 ongoing-quiz group cursor-pointer" onclick="toggleActiveQuiz()">
+<div class="animated-border rounded-xl"></div>
+<div class="flex justify-between items-start mb-6">
+<div class="flex flex-col gap-1">
+<span class="bg-primary/15 text-primary px-3 py-1 rounded-full font-label-md text-label-md text-xs w-max">Neural Networks</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mt-2">Advanced Backpropagation</h3>
+</div>
+<span class="font-headline-lg text-headline-lg text-secondary">4/10</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-2 mb-2 overflow-hidden">
+<div class="bg-secondary h-2 rounded-full shadow-[0_0_10px_rgba(123,214,209,0.5)] transition-all duration-1000 ease-out" style="width: 40%"></div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm text-right">40% Complete</p>
+</div>
+<!-- Ongoing Card 2 -->
+<div class="glass-panel bento-card rounded-xl p-8 ongoing-quiz group cursor-pointer" onclick="toggleActiveQuiz()">
+<div class="animated-border rounded-xl"></div>
+<div class="flex justify-between items-start mb-6">
+<div class="flex flex-col gap-1">
+<span class="bg-tertiary/15 text-tertiary px-3 py-1 rounded-full font-label-md text-label-md text-xs w-max">Cognitive Psychology</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mt-2">Memory Consolidation</h3>
+</div>
+<span class="font-headline-lg text-headline-lg text-secondary">8/15</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-2 mb-2 overflow-hidden">
+<div class="bg-secondary h-2 rounded-full shadow-[0_0_10px_rgba(123,214,209,0.5)] transition-all duration-1000 ease-out" style="width: 53%"></div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm text-right">53% Complete</p>
+</div>
+</div>
+</section>
+<!-- Past Performance Grid -->
+<section class="flex flex-col gap-6 mt-12 mb-24">
+<div class="flex justify-between items-end">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-outline">history</span>
+                        Recent Assessments
+                    </h2>
+<button class="text-primary hover:text-tertiary font-label-md text-label-md transition-colors flex items-center gap-1">
+                        View All <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Completed Card 1 -->
+<div class="glass-panel bento-card rounded-xl p-6 flex flex-col gap-4 hover:-translate-y-1 transition-transform duration-300">
+<div class="flex justify-between items-center">
+<span class="bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full font-label-md text-[10px] uppercase tracking-wider">Completed 2d ago</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1 text-lg">Quantum Mechanics Fundamentals</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Physics Cluster</p>
+</div>
+<div class="mt-auto flex items-end justify-between pt-4 border-t border-white/5">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant text-xs">Score</span>
+<span class="font-headline-lg text-headline-lg text-primary">92%</span>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-label-md text-label-md text-on-surface-variant text-xs">Time</span>
+<span class="font-body-lg text-body-lg text-on-surface">18m 42s</span>
+</div>
+</div>
+</div>
+<!-- Completed Card 2 -->
+<div class="glass-panel bento-card rounded-xl p-6 flex flex-col gap-4 hover:-translate-y-1 transition-transform duration-300">
+<div class="flex justify-between items-center">
+<span class="bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full font-label-md text-[10px] uppercase tracking-wider">Completed 5d ago</span>
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">error</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1 text-lg">European History 1800-1900</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Humanities Cluster</p>
+</div>
+<div class="mt-auto flex items-end justify-between pt-4 border-t border-white/5">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant text-xs">Score</span>
+<span class="font-headline-lg text-headline-lg text-error">68%</span>
+</div>
+<button class="text-xs font-label-md text-secondary border border-secondary/30 bg-secondary/10 px-3 py-1.5 rounded-full hover:bg-secondary/20 transition-colors">
+                                Review Missed
+                            </button>
+</div>
+</div>
+<!-- Completed Card 3 -->
+<div class="glass-panel bento-card rounded-xl p-6 flex flex-col gap-4 hover:-translate-y-1 transition-transform duration-300">
+<div class="flex justify-between items-center">
+<span class="bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full font-label-md text-[10px] uppercase tracking-wider">Completed 1w ago</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1 text-lg">Cellular Biology: Mitosis</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Bio Cluster</p>
+</div>
+<div class="mt-auto flex items-end justify-between pt-4 border-t border-white/5">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant text-xs">Score</span>
+<span class="font-headline-lg text-headline-lg text-primary">85%</span>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-label-md text-label-md text-on-surface-variant text-xs">Time</span>
+<span class="font-body-lg text-body-lg text-on-surface">12m 10s</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Active Quiz Mode (Cinematic Overlay) -->
+<div class="fixed inset-0 z-50 bg-background hidden flex-col" id="active-quiz-view">
+<!-- Subtle Animated BG for focus mode -->
+<div class="absolute inset-0 opacity-30 pointer-events-none" style="background-image: radial-gradient(circle at 50% 50%, rgba(111, 66, 193, 0.1) 0%, transparent 70%);"></div>
+<!-- Header -->
+<header class="h-20 px-8 flex justify-between items-center border-b border-white/5 glass-panel z-10">
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-white transition-colors flex items-center justify-center w-10 h-10 rounded-full bg-surface-container hover:bg-surface-bright" onclick="toggleActiveQuiz()">
+<span class="material-symbols-outlined">close</span>
+</button>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-secondary text-xs uppercase tracking-wider">Active Assessment</span>
+<span class="font-body-md text-body-md text-on-surface">Advanced Backpropagation</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex flex-col items-end">
+<span class="font-label-md text-label-md text-on-surface-variant text-xs uppercase">Time Elapsed</span>
+<span class="font-headline-md text-headline-md text-primary font-mono">04:21</span>
+</div>
+<div class="w-32 h-2 bg-surface-container-highest rounded-full overflow-hidden hidden md:block">
+<div class="bg-gradient-to-r from-primary to-tertiary h-full rounded-full w-2/5"></div>
+</div>
+<span class="font-label-md text-label-md text-on-surface hidden md:block">4/10</span>
+</div>
+</header>
+<!-- Quiz Content Canvas -->
+<div class="flex-1 overflow-y-auto flex flex-col items-center justify-center p-6 md:p-12 relative z-10">
+<div class="max-w-4xl w-full flex flex-col gap-12">
+<!-- Question Area -->
+<div class="text-center">
+<span class="font-label-md text-label-md text-secondary mb-4 block tracking-widest uppercase">Question 4</span>
+<h2 class="font-display-lg text-display-lg text-on-surface leading-tight font-light">
+                        In a neural network utilizing the sigmoid activation function, what is the primary consequence of applying backpropagation to a very deep architecture?
+                    </h2>
+</div>
+<!-- Options Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8" id="quiz-options">
+<div class="glass-panel option-card rounded-xl p-6 flex gap-4 items-start" onclick="selectOption(this)">
+<div class="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center shrink-0 font-label-md text-on-surface-variant option-letter">A</div>
+<p class="font-body-lg text-body-lg text-on-surface pt-1">Exploding gradients causing the weights to oscillate wildly and preventing convergence.</p>
+</div>
+<div class="glass-panel option-card rounded-xl p-6 flex gap-4 items-start" onclick="selectOption(this)">
+<div class="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center shrink-0 font-label-md text-on-surface-variant option-letter">B</div>
+<p class="font-body-lg text-body-lg text-on-surface pt-1">Vanishing gradients resulting in the earliest layers learning extremely slowly compared to later layers.</p>
+</div>
+<div class="glass-panel option-card rounded-xl p-6 flex gap-4 items-start" onclick="selectOption(this)">
+<div class="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center shrink-0 font-label-md text-on-surface-variant option-letter">C</div>
+<p class="font-body-lg text-body-lg text-on-surface pt-1">Overfitting to the training data due to the high capacity of the deep network layers.</p>
+</div>
+<div class="glass-panel option-card rounded-xl p-6 flex gap-4 items-start" onclick="selectOption(this)">
+<div class="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center shrink-0 font-label-md text-on-surface-variant option-letter">D</div>
+<p class="font-body-lg text-body-lg text-on-surface pt-1">The sigmoid function outputs negative values, causing the error signal to flip direction unpredictably.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<footer class="h-24 px-8 flex justify-between items-center glass-panel z-10">
+<button class="px-6 py-3 rounded-full border border-white/10 text-on-surface font-label-md text-label-md hover:bg-white/5 transition-colors">
+                Previous
+            </button>
+<button class="px-8 py-3 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md cursor-not-allowed transition-all duration-300" disabled="" id="next-btn">
+                Next Question
+            </button>
+</footer>
+</div>
+<script>
+        function toggleActiveQuiz() {
+            const quizView = document.getElementById('active-quiz-view');
+            const mainView = document.getElementById('main-view');
+            const sideNav = document.querySelector('aside'); // Assuming SideNavBar is an aside tag
+            
+            if (quizView.classList.contains('hidden')) {
+                quizView.classList.remove('hidden');
+                quizView.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+                if(sideNav) sideNav.style.display = 'none';
+            } else {
+                quizView.classList.add('hidden');
+                quizView.classList.remove('flex');
+                document.body.style.overflow = '';
+                if(sideNav) sideNav.style.display = '';
+                
+                // Reset selection
+                const options = document.querySelectorAll('.option-card');
+                options.forEach(opt => opt.classList.remove('selected'));
+                const nextBtn = document.getElementById('next-btn');
+                nextBtn.disabled = true;
+                nextBtn.className = 'px-8 py-3 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md cursor-not-allowed transition-all duration-300';
+            }
+        }
+
+        function selectOption(element) {
+            // Remove selected from all
+            const options = document.querySelectorAll('.option-card');
+            options.forEach(opt => {
+                opt.classList.remove('selected');
+                opt.querySelector('.option-letter').classList.replace('bg-secondary', 'border');
+                opt.querySelector('.option-letter').classList.replace('text-background', 'text-on-surface-variant');
+                opt.querySelector('.option-letter').classList.remove('border-transparent');
+            });
+
+            // Add selected to clicked
+            element.classList.add('selected');
+            const letter = element.querySelector('.option-letter');
+            letter.classList.add('bg-secondary', 'text-background', 'border-transparent');
+            letter.classList.remove('border', 'text-on-surface-variant');
+
+            // Enable Next Button
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = false;
+            nextBtn.className = 'px-8 py-3 rounded-full bg-gradient-to-r from-primary to-tertiary text-white font-label-md text-label-md hover:scale-105 transition-all duration-300 shadow-[0_0_15px_rgba(111,66,193,0.4)] cursor-pointer';
+        }
+    </script>
+</body></html>

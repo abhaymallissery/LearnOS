@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Aether OS - Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#958e9e",
+                        "on-tertiary-fixed": "#2c0051",
+                        "on-primary": "#3f008d",
+                        "tertiary-fixed-dim": "#ddb7ff",
+                        "error": "#ffb4ab",
+                        "secondary-fixed-dim": "#7bd6d1",
+                        "secondary": "#7bd6d1",
+                        "surface-container-highest": "#343439",
+                        "tertiary": "#ddb7ff",
+                        "on-secondary-fixed-variant": "#00504d",
+                        "primary": "#d3bbff",
+                        "outline-variant": "#4a4453",
+                        "primary-fixed": "#ebddff",
+                        "surface-variant": "#343439",
+                        "background": "#121317",
+                        "inverse-on-surface": "#2f3035",
+                        "on-background": "#e3e2e8",
+                        "surface": "#121317",
+                        "surface-container-lowest": "#0d0e12",
+                        "secondary-fixed": "#98f2ed",
+                        "on-primary-fixed": "#250059",
+                        "on-surface-variant": "#ccc3d5",
+                        "on-error-container": "#ffdad6",
+                        "surface-tint": "#d3bbff",
+                        "on-error": "#690005",
+                        "inverse-primary": "#7043c2",
+                        "on-secondary-container": "#a1fcf7",
+                        "on-primary-fixed-variant": "#5726a8",
+                        "on-tertiary-container": "#e9cdff",
+                        "on-secondary": "#003735",
+                        "surface-container": "#1f1f24",
+                        "surface-dim": "#121317",
+                        "on-surface": "#e3e2e8",
+                        "primary-fixed-dim": "#d3bbff",
+                        "surface-container-high": "#292a2e",
+                        "surface-container-low": "#1a1b20",
+                        "error-container": "#93000a",
+                        "primary-container": "#6f42c1",
+                        "inverse-surface": "#e3e2e8",
+                        "secondary-container": "#007774",
+                        "tertiary-fixed": "#f0dbff",
+                        "on-tertiary-fixed-variant": "#6900b3",
+                        "tertiary-container": "#832ad1",
+                        "on-primary-container": "#e2d0ff",
+                        "surface-bright": "#38393e",
+                        "on-secondary-fixed": "#00201f",
+                        "on-tertiary": "#490080"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-gap": "32px",
+                        "grid-unit": "8px",
+                        "container-max": "1440px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+        body {
+            background-color: #121317;
+            background-image: radial-gradient(circle at 15% 50%, rgba(111, 66, 193, 0.05), transparent 25%), radial-gradient(circle at 85% 30%, rgba(0, 119, 116, 0.05), transparent 25%);
+            color: #e3e2e8;
+        }
+        .glass-card {
+            background: rgba(31, 31, 36, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100px; height: 100px;
+            background: radial-gradient(circle, rgba(211, 187, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .heatmap-cell {
+            transition: all 0.2s ease;
+        }
+        .heatmap-cell:hover {
+            transform: scale(1.2);
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(123, 214, 209, 0.5);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased min-h-screen flex selection:bg-primary selection:text-on-primary">
+<!-- Shared Components: Navigation -->
+<!-- SideNavBar -->
+<nav class="bg-surface/60 backdrop-blur-md font-body-md text-body-md h-screen w-64 fixed left-0 top-0 border-r border-white/10 shadow-2xl shadow-primary/20 flex flex-col gap-4 p-6 hidden md:flex z-50">
+<div class="mb-8">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Aether Mind</h1>
+<p class="text-on-surface-variant font-label-md text-label-md mt-1">AI Second Brain</p>
+</div>
+<a class="text-on-surface-variant hover:text-on-surface hover:scale-105 transition-transform duration-200 cursor-pointer active:scale-95 flex items-center gap-3 p-3 rounded-xl" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+            Dashboard
+        </a>
+<a class="text-on-surface-variant hover:text-on-surface hover:scale-105 transition-transform duration-200 cursor-pointer active:scale-95 flex items-center gap-3 p-3 rounded-xl" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+            Library
+        </a>
+<a class="text-on-surface-variant hover:text-on-surface hover:scale-105 transition-transform duration-200 cursor-pointer active:scale-95 flex items-center gap-3 p-3 rounded-xl" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+            AI Chat
+        </a>
+<a class="text-on-surface-variant hover:text-on-surface hover:scale-105 transition-transform duration-200 cursor-pointer active:scale-95 flex items-center gap-3 p-3 rounded-xl" href="#">
+<span class="material-symbols-outlined">quiz</span>
+            Exam Center
+        </a>
+<a class="text-on-surface-variant hover:text-on-surface hover:scale-105 transition-transform duration-200 cursor-pointer active:scale-95 flex items-center gap-3 p-3 rounded-xl" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+            Revision Center
+        </a>
+<!-- Active Tab -->
+<a class="text-primary bg-primary/10 rounded-xl hover:scale-105 transition-transform duration-200 cursor-pointer active:scale-95 flex items-center gap-3 p-3" href="#">
+<span class="material-symbols-outlined">analytics</span>
+            Analytics
+        </a>
+<div class="mt-auto flex items-center gap-3 pt-4 border-t border-white/10">
+<img alt="User Profile Avatar" class="w-10 h-10 rounded-full object-cover border border-white/20" data-alt="A futuristic minimalist avatar placeholder featuring glowing geometric lines forming a human silhouette against a dark cosmic void background, high-end premium SaaS aesthetic, deep blacks and bright primary colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFBNVXmcesRnePD7Rx3lFFCeTIncvo9aFXQjQk-nJjPP0A5zyOrazyfUXtzClB4Yh4-BmSOhepDUTHaMTi_6sX-2d7dVsrwh-uE2A_zmDewqygYMZdA4aCv4ZYWa-WLe3VpevdzWJY1LJmnjqC2C8hJ-DOWYfVkBtPvFEy151_JWPwzavSpjetNZdCgA39s9xhOpN9MXfMeXsxGUbMOrorkPodNs212Fl-ZrV4Occxc65ySUfm5Ph7"/>
+</div>
+</nav>
+<!-- TopNavBar -->
+<header class="bg-surface/40 backdrop-blur-xl font-label-md text-label-md fixed top-0 right-0 w-[calc(100%-16rem)] z-40 border-b border-white/5 shadow-sm flex justify-between items-center h-16 px-margin-desktop ml-64 hidden md:flex">
+<div class="font-headline-md text-headline-md font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-tertiary">
+            Aether OS
+        </div>
+<div class="flex items-center gap-6">
+<div class="relative focus-within:ring-2 focus-within:ring-secondary/50 rounded-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="bg-surface-container/50 border border-white/10 rounded-full py-2 pl-10 pr-4 text-on-surface focus:outline-none focus:border-secondary transition-colors w-64" placeholder="Search analytics..." type="text"/>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors focus-within:ring-2 focus-within:ring-secondary/50 rounded-full p-1">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors focus-within:ring-2 focus-within:ring-secondary/50 rounded-full p-1">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<img alt="User Profile" class="w-8 h-8 rounded-full object-cover border border-white/20" data-alt="A futuristic minimalist avatar placeholder featuring glowing geometric lines forming a human silhouette against a dark cosmic void background, high-end premium SaaS aesthetic, deep blacks and bright primary colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlE6k6LpYXey-XcUrk_RFiKInY6MVocxYznr_il26ySl9XH_T5AYEfMLQk8ma7KmFesbQvMIrUL_kuKrzxo0tWKRrmHHKusNRniDQX5Xz4aKPYGqUVfC_UWx2tdTEgzID77vJPoT0TrOmpPz5EPTqKbwDVQXuS3bX-yXlRBIBgxcqtBokWs3574GJMXoAeELyGu3SkTmxKJDzGDMFK8XOOQDWNFYHHYikJdP8reJZKAk1-9kb2kd7d"/>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 pt-20 p-margin-mobile md:p-gutter max-w-container-max mx-auto w-full">
+<div class="mb-8">
+<h2 class="font-display-lg text-display-lg text-on-surface">Analytics Overview</h2>
+<p class="text-on-surface-variant font-body-lg text-body-lg mt-2">Track your learning velocity and mastery levels.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter auto-rows-min">
+<!-- Top Stats - Spanning top row -->
+<div class="md:col-span-4 glass-card rounded-xl p-6 flex flex-col gap-2 hover:scale-[1.02] transition-transform duration-300">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">Current Streak</span>
+<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+</div>
+<div class="font-display-lg text-display-lg text-on-surface flex items-baseline gap-2">
+                    14 <span class="font-body-md text-body-md text-on-surface-variant">days</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-full mt-2 overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-tertiary w-[70%]"></div>
+</div>
+</div>
+<div class="md:col-span-4 glass-card rounded-xl p-6 flex flex-col gap-2 hover:scale-[1.02] transition-transform duration-300">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">Total Study Hours</span>
+<div class="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">schedule</span>
+</div>
+</div>
+<div class="font-display-lg text-display-lg text-on-surface flex items-baseline gap-2">
+                    128.5 <span class="font-body-md text-body-md text-on-surface-variant">hrs</span>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<span class="text-secondary font-label-md text-label-md flex items-center"><span class="material-symbols-outlined text-sm">trending_up</span> +12%</span>
+<span class="text-on-surface-variant font-body-sm text-sm">vs last month</span>
+</div>
+</div>
+<div class="md:col-span-4 glass-card rounded-xl p-6 flex flex-col gap-2 hover:scale-[1.02] transition-transform duration-300">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">Cards Reviewed</span>
+<div class="w-8 h-8 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">style</span>
+</div>
+</div>
+<div class="font-display-lg text-display-lg text-on-surface flex items-baseline gap-2">
+                    3,492
+                </div>
+<div class="flex items-center gap-2 mt-2">
+<span class="px-2 py-1 rounded-full bg-tertiary/15 text-tertiary font-label-md text-xs">Neuroscience</span>
+<span class="px-2 py-1 rounded-full bg-primary/15 text-primary font-label-md text-xs">Quantum Mechanics</span>
+</div>
+</div>
+<!-- Line Chart Area - Main Focus -->
+<div class="md:col-span-8 glass-card rounded-xl p-8 min-h-[400px] flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">Learning Velocity</h3>
+<div class="flex gap-2">
+<button class="px-4 py-1.5 rounded-full bg-surface-container border border-white/10 text-on-surface-variant font-label-md text-sm hover:text-on-surface transition-colors">Weekly</button>
+<button class="px-4 py-1.5 rounded-full bg-primary/20 border border-primary/30 text-primary font-label-md text-sm shadow-[0_0_15px_rgba(211,187,255,0.2)]">Monthly</button>
+</div>
+</div>
+<div class="flex-1 relative w-full">
+<canvas id="velocityChart"></canvas>
+</div>
+</div>
+<!-- Radar Chart Area - Secondary Focus -->
+<div class="md:col-span-4 glass-card rounded-xl p-8 min-h-[400px] flex flex-col">
+<div class="mb-6 flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md text-on-surface">Subject Mastery</h3>
+<span class="material-symbols-outlined text-on-surface-variant">psychology</span>
+</div>
+<div class="flex-1 relative w-full flex items-center justify-center">
+<canvas id="masteryChart"></canvas>
+</div>
+</div>
+<!-- GitHub Style Heatmap -->
+<div class="md:col-span-12 glass-card rounded-xl p-8">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">Activity Map</h3>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-md text-sm">
+<span>Less</span>
+<div class="flex gap-1">
+<div class="w-3 h-3 rounded-sm bg-surface-container"></div>
+<div class="w-3 h-3 rounded-sm bg-secondary/30"></div>
+<div class="w-3 h-3 rounded-sm bg-secondary/60"></div>
+<div class="w-3 h-3 rounded-sm bg-secondary/90"></div>
+<div class="w-3 h-3 rounded-sm bg-secondary" style="box-shadow: 0 0 8px rgba(123, 214, 209, 0.6);"></div>
+</div>
+<span>More</span>
+</div>
+</div>
+<div class="overflow-x-auto pb-4">
+<!-- Javascript will populate this grid -->
+<div class="flex gap-1" id="heatmap-container" style="min-width: 800px;"></div>
+</div>
+</div>
+</div>
+</main>
+<!-- Chart.js and Heatmap Initialization -->
+<script>
+        // Common Chart Defaults for Dark Theme
+        Chart.defaults.color = '#ccc3d5'; // on-surface-variant
+        Chart.defaults.font.family = 'Inter';
+        Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(31, 31, 36, 0.9)'; // surface-container
+        Chart.defaults.plugins.tooltip.titleColor = '#e3e2e8';
+        Chart.defaults.plugins.tooltip.bodyColor = '#ccc3d5';
+        Chart.defaults.plugins.tooltip.borderColor = 'rgba(255, 255, 255, 0.1)';
+        Chart.defaults.plugins.tooltip.borderWidth = 1;
+        Chart.defaults.plugins.tooltip.padding = 12;
+        Chart.defaults.plugins.tooltip.cornerRadius = 8;
+
+        // Line Chart (Learning Velocity)
+        const ctxVelocity = document.getElementById('velocityChart').getContext('2d');
+        
+        // Create Gradient for Line Chart
+        let gradientLine = ctxVelocity.createLinearGradient(0, 0, 0, 400);
+        gradientLine.addColorStop(0, 'rgba(211, 187, 255, 0.5)'); // primary
+        gradientLine.addColorStop(1, 'rgba(211, 187, 255, 0.0)');
+
+        new Chart(ctxVelocity, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Study Hours',
+                    data: [45, 52, 38, 65, 59, 80, 85],
+                    borderColor: '#d3bbff', // primary
+                    backgroundColor: gradientLine,
+                    borderWidth: 2,
+                    pointBackgroundColor: '#121317', // background
+                    pointBorderColor: '#7bd6d1', // secondary
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        border: { display: false }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        border: { display: false },
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+            }
+        });
+
+        // Radar Chart (Subject Mastery)
+        const ctxMastery = document.getElementById('masteryChart').getContext('2d');
+        new Chart(ctxMastery, {
+            type: 'radar',
+            data: {
+                labels: ['Logic', 'Math', 'Physics', 'Biology', 'History', 'CompSci'],
+                datasets: [{
+                    label: 'Mastery Level',
+                    data: [85, 70, 65, 90, 50, 95],
+                    backgroundColor: 'rgba(123, 214, 209, 0.2)', // secondary
+                    borderColor: '#7bd6d1', // secondary
+                    pointBackgroundColor: '#7bd6d1',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#7bd6d1',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        pointLabels: {
+                            color: '#ccc3d5',
+                            font: { size: 12, family: 'Inter' }
+                        },
+                        ticks: { display: false, max: 100, min: 0 }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Generate GitHub-style Heatmap
+        const heatmapContainer = document.getElementById('heatmap-container');
+        const cols = 52; // Weeks in a year
+        const rows = 7;  // Days in a week
+        
+        for (let w = 0; w < cols; w++) {
+            const column = document.createElement('div');
+            column.className = 'flex flex-col gap-1';
+            
+            for (let d = 0; d < rows; d++) {
+                const cell = document.createElement('div');
+                // Randomly assign intensity (0 to 4)
+                const intensity = Math.floor(Math.random() * 5);
+                // Bias slightly towards 0 for realism
+                const finalIntensity = Math.random() > 0.6 ? intensity : 0; 
+                
+                let bgClass = 'bg-surface-container';
+                let shadowStyle = '';
+                
+                if (finalIntensity === 1) bgClass = 'bg-secondary/30';
+                if (finalIntensity === 2) bgClass = 'bg-secondary/60';
+                if (finalIntensity === 3) bgClass = 'bg-secondary/90';
+                if (finalIntensity === 4) {
+                    bgClass = 'bg-secondary';
+                    shadowStyle = 'box-shadow: 0 0 6px rgba(123, 214, 209, 0.4);';
+                }
+
+                cell.className = `w-3 h-3 rounded-sm ${bgClass} heatmap-cell cursor-pointer`;
+                if(shadowStyle) cell.style = shadowStyle;
+                
+                // Add simple tooltip title for hover
+                cell.title = `${Math.floor(Math.random() * 20)} contributions on this day`;
+                
+                column.appendChild(cell);
+            }
+            heatmapContainer.appendChild(column);
+        }
+    </script>
+</body></html>

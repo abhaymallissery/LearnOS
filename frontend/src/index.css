@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-on-background min-h-screen font-body-md overflow-x-hidden selection:bg-primary/30 selection:text-primary;
+    background-image: radial-gradient(circle at 15% 50%, rgba(111, 66, 193, 0.05), transparent 50%),
+                      radial-gradient(circle at 85% 30%, rgba(0, 106, 103, 0.05), transparent 50%);
+  }
+}
+
+@layer utilities {
+  /* 3D Flip Utilities */
+  .perspective-1000 { perspective: 1000px; }
+  .transform-style-3d { transform-style: preserve-3d; }
+  .backface-hidden { backface-visibility: hidden; }
+  .rotate-y-180 { transform: rotateY(180deg); }
+  
+  /* Custom Progress Ring Animation */
+  @keyframes stroke-dashoffset {
+      to { stroke-dashoffset: 60; } /* Example filled state, will override inline */
+  }
+  .animate-progress {
+      animation: stroke-dashoffset 1s ease-out forwards;
+  }
+}

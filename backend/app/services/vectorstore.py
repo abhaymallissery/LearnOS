@@ -1,0 +1,100 @@
+"""
+Wraps ChromaDB (via LangChain) so every uploaded document becomes part of the
+user's permanent, searchable personal library. Embeddings are produced via
+Google Gemini API (models/embedding-001).
+"""
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.docstore.document import Document as LCDocument
+
+from app.config import settings
+
+_embeddings = None
+_store = None
+
+
+def get_embeddings():
+    global _embeddings
+    if _embeddings is None:
+        try:
+            _embeddings = HuggingFaceEmbeddings(
+                model_name="all-MiniLM-L6-v2"
+            )
+        except Exception as e:
+            print(f"Failed to initialize HuggingFace embeddings: {e}")
+            from langchain_community.embeddings import FakeEmbeddings
+            _embeddings = FakeEmbeddings(size=384)
+    return _embeddings
+
+
+def get_vectorstore():
+    global _store
+    if _store is None:
+        _store = Chroma(
+            collection_name="learnos_collection_v2",
+            embedding_function=get_embeddings(),
+            persist_directory=settings.CHROMA_DIR
+        )
+    return _store
+
+
+def index_document(document_id: str, subject_id: str, title: str, text: str):
+    """Chunk the document and push it into the permanent vector library,
+    tagged with metadata so search/chat can be scoped by subject or document."""
+    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=150)
+    chunks = splitter.split_text(text)
+
+    docs = [
+        LCDocument(
+            page_content=chunk,
+            metadata={
+                "document_id": document_id,
+                "subject_id": subject_id,
+                "title": title,
+                "chunk_index": i,
+            },
+        )
+        for i, chunk in enumerate(chunks)
+    ]
+
+    store = get_vectorstore()
+    if docs:
+        import time
+        batch_size = 20
+        for i in range(0, len(docs), batch_size):
+            batch = docs[i:i + batch_size]
+            retries = 3
+            for attempt in range(retries):
+                try:
+                    store.add_documents(batch)
+                    break
+                except Exception as e:
+                    if attempt == retries - 1:
+                        raise e
+                    print(f"Embedding batch failed (attempt {attempt+1}/{retries}): {e}. Retrying in 2s...")
+                    time.sleep(2)
+    return len(docs)
+
+
+def semantic_search(query: str, k: int = 5, document_ids: list[str] | None = None):
+    store = get_vectorstore()
+    filt = {"document_id": {"$in": document_ids}} if document_ids else None
+    import time
+    for attempt in range(3):
+        try:
+            return store.similarity_search(query, k=k, filter=filt)
+        except Exception as e:
+            if attempt == 2:
+                raise e
+            print(f"Semantic search failed (attempt {attempt+1}/3): {e}. Retrying...")
+            time.sleep(2)
+    return []
+
+
+def delete_document_vectors(document_id: str):
+    store = get_vectorstore()
+    try:
+        store._collection.delete(where={"document_id": document_id})
+    except Exception:
+        pass
