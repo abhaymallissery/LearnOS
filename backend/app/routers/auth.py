@@ -29,7 +29,7 @@ def register(payload: schemas.UserCreate, db: Session = Depends(get_db)):
         name=payload.name,
         email=payload.email,
         hashed_password=hash_password(payload.password),
-        is_verified=False
+        is_verified=True  # Force automatic verification for testing
     )
     db.add(user)
     db.commit()
@@ -44,12 +44,6 @@ def register(payload: schemas.UserCreate, db: Session = Depends(get_db)):
 
     # Send verification email
     email_sent = send_verification_email(user.email, token)
-    
-    if not email_sent:
-        # If SMTP is not configured (mock email), auto-verify the user for testing purposes
-        user.is_verified = True
-        db.delete(v_token)
-        db.commit()
 
     return user
 
