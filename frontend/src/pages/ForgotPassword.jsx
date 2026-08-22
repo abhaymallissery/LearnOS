@@ -10,21 +10,7 @@ export default function ForgotPassword() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   
-  const [timer, setTimer] = useState(0);
-
-  useEffect(() => {
-    let interval = null;
-    if (timer > 0) {
-      interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
-      }, 1000);
-    } else if (interval) {
-      clearInterval(interval);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [timer]);
+  const [autoVerified, setAutoVerified] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,23 +29,11 @@ export default function ForgotPassword() {
     
     try {
       const res = await forgotPassword({ email, new_password: newPassword });
-      setMessage(res.data.detail || "Check your email for the verification link.");
-      setTimer(180); // Start 3 minute timer
-    } catch (err) {
-      setError(err?.response?.data?.detail || "An error occurred.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResend = async () => {
-    setError("");
-    setLoading(true);
-    setMessage("");
-    try {
-      const res = await forgotPassword({ email, new_password: newPassword });
-      setMessage("Verification email resent. Please check your inbox.");
-      setTimer(180); // Reset timer
+      if (res.data.detail && res.data.detail.includes("automatically")) {
+        setAutoVerified(true);
+      } else {
+        setMessage(res.data.detail || "Check your email for the verification link.");
+      }
     } catch (err) {
       setError(err?.response?.data?.detail || "An error occurred.");
     } finally {
@@ -85,6 +59,20 @@ export default function ForgotPassword() {
           <p className="text-sm text-[#ccc3d5]">Enter your email and a new password</p>
         </div>
 
+        {autoVerified ? (
+          <div className="text-center py-6 animate-in fade-in slide-in-from-bottom-4">
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-[#007774]/20 mb-6 border border-[#007774]/30">
+              <span className="material-symbols-outlined text-4xl text-[#7bd6d1]">check_circle</span>
+            </div>
+            <h2 className="text-xl font-bold text-[#e3e2e8] mb-3">Password Reset!</h2>
+            <p className="text-sm text-[#ccc3d5] mb-6 leading-relaxed">
+              Your password has been successfully reset. Since you are running in local development mode without an email server, your password was changed automatically.
+            </p>
+            <Link to="/login" className="inline-block w-full text-center px-4 py-3 bg-gradient-to-r from-[#832ad1] to-[#ddb7ff] hover:from-[#6f42c1] hover:to-[#d3bbff] text-white font-bold rounded-full shadow-lg shadow-[#6f42c1]/20 transition-all">
+              Sign In Now
+            </Link>
+          </div>
+        ) : (
         <form onSubmit={handleSubmit} className="space-y-5 animate-in fade-in slide-in-from-bottom-4">
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
@@ -97,7 +85,6 @@ export default function ForgotPassword() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              disabled={timer > 0}
             />
           </div>
           
@@ -112,7 +99,6 @@ export default function ForgotPassword() {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
-              disabled={timer > 0}
               minLength={6}
             />
           </div>
@@ -128,7 +114,6 @@ export default function ForgotPassword() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              disabled={timer > 0}
               minLength={6}
             />
           </div>
@@ -145,32 +130,17 @@ export default function ForgotPassword() {
             </div>
           )}
           
-          {timer === 0 ? (
-            <button 
-              type="submit" 
-              className="w-full bg-gradient-to-r from-[#832ad1] to-[#ddb7ff] hover:from-[#6f42c1] hover:to-[#d3bbff] text-white font-bold py-3 px-4 rounded-full shadow-lg shadow-[#6f42c1]/20 transition-all active:scale-[0.98] disabled:opacity-70 flex justify-center items-center mt-2"
-              disabled={loading}
-            >
-              {loading ? (
-                <span className="material-symbols-outlined animate-spin">refresh</span>
-              ) : (
-                "Verify New Password"
-              )}
-            </button>
-          ) : (
-            <button 
-              type="button" 
-              onClick={handleResend}
-              className="w-full bg-gradient-to-r from-slate-700 to-slate-600 hover:from-slate-600 hover:to-slate-500 text-white font-bold py-3 px-4 rounded-full shadow-lg transition-all active:scale-[0.98] disabled:opacity-70 flex justify-center items-center mt-2"
-              disabled={loading}
-            >
-              {loading ? (
-                <span className="material-symbols-outlined animate-spin">refresh</span>
-              ) : (
-                `Resend Verification (${Math.floor(timer/60)}:${(timer%60).toString().padStart(2, '0')})`
-              )}
-            </button>
-          )}
+          <button 
+            type="submit" 
+            className="w-full bg-gradient-to-r from-[#832ad1] to-[#ddb7ff] hover:from-[#6f42c1] hover:to-[#d3bbff] text-white font-bold py-3 px-4 rounded-full shadow-lg shadow-[#6f42c1]/20 transition-all active:scale-[0.98] disabled:opacity-70 flex justify-center items-center mt-2"
+            disabled={loading}
+          >
+            {loading ? (
+              <span className="material-symbols-outlined animate-spin">refresh</span>
+            ) : (
+              "Reset Password"
+            )}
+          </button>
 
           <p className="text-sm text-[#ccc3d5] mt-6 text-center">
             <Link to="/login" className="font-semibold text-[#7bd6d1] hover:text-[#98f2ed] transition-colors flex items-center justify-center gap-1">
@@ -179,6 +149,7 @@ export default function ForgotPassword() {
             </Link>
           </p>
         </form>
+        )}
       </div>
     </div>
   );
