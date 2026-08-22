@@ -100,11 +100,7 @@ def forgot_password(payload: schemas.ForgotPasswordRequest, db: Session = Depend
         db.commit()
         return {"detail": "Password changed automatically for testing."}
     else:
-        # User not found
-        pass
-        
-    # Always return success to prevent email enumeration
-    return {"detail": "If that email is registered, a password reset link has been sent."}
+        raise HTTPException(status_code=404, detail="No account detected with this email. First you need to create an account.")
 
 
 @router.post("/reset-password")
