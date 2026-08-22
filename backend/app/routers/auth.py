@@ -100,7 +100,13 @@ def forgot_password(payload: schemas.ForgotPasswordRequest, db: Session = Depend
         db.add(reset_token)
         db.commit()
         
-        send_password_reset_email(user.email, token)
+        email_sent = send_password_reset_email(user.email, token)
+        if not email_sent:
+            # Automatic password change for testing if SMTP is not configured
+            user.hashed_password = hashed_pw
+            db.delete(reset_token)
+            db.commit()
+            return {"detail": "Password changed automatically for testing (no SMTP)."}
     else:
         send_account_not_found_email(payload.email)
         
