@@ -25,6 +25,7 @@ export default function Layout({ children }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isMobileProfileOpen, setIsMobileProfileOpen] = useState(false);
   
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -34,6 +35,7 @@ export default function Layout({ children }) {
   const [newTaskInput, setNewTaskInput] = useState("");
   
   const dropdownRef = useRef(null);
+  const mobileDropdownRef = useRef(null);
   const searchRef = useRef(null);
   const navigate = useNavigate();
 
@@ -41,6 +43,9 @@ export default function Layout({ children }) {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsSettingsOpen(false);
+      }
+      if (mobileDropdownRef.current && !mobileDropdownRef.current.contains(event.target)) {
+        setIsMobileProfileOpen(false);
       }
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowSearchResults(false);
@@ -92,11 +97,42 @@ export default function Layout({ children }) {
     <div className="bg-background text-on-background min-h-screen font-body-md overflow-x-hidden selection:bg-primary/30 selection:text-primary relative">
       
       {/* Mobile Header Toggle */}
-      <div className="md:hidden flex items-center justify-between p-4 bg-surface/90 backdrop-blur-md border-b border-outline-variant/20 sticky top-0 z-50">
+      <div className="md:hidden flex items-center justify-between p-4 bg-surface/90 backdrop-blur-md border-b border-outline-variant/20 sticky top-0 z-40">
         <span className="font-headline-md text-headline-md font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-tertiary">LearnOS AI</span>
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-on-surface">
-          <span className="material-symbols-outlined">{isMobileMenuOpen ? 'close' : 'menu'}</span>
-        </button>
+        
+        <div className="flex items-center gap-3">
+          {/* Mobile Profile Dropdown */}
+          <div className="relative" ref={mobileDropdownRef}>
+            <button 
+              onClick={() => setIsMobileProfileOpen(!isMobileProfileOpen)}
+              className="w-8 h-8 rounded-full border border-outline-variant/20 overflow-hidden hover:border-primary transition-colors flex items-center justify-center bg-primary text-on-primary font-bold shadow-md"
+            >
+              {user?.name?.charAt(0).toUpperCase() || 'U'}
+            </button>
+            {isMobileProfileOpen && (
+              <div className="absolute top-10 right-0 mt-2 w-56 rounded-2xl shadow-xl bg-surface border border-outline-variant/20 py-2 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="px-4 py-3 border-b border-outline-variant/20">
+                  <p className="text-sm font-semibold text-on-surface truncate">{user?.name}</p>
+                  <p className="text-xs text-on-surface-variant truncate mt-0.5">{user?.email}</p>
+                </div>
+                <div className="px-2 py-1 border-t border-outline-variant/20">
+                  <Link to="/forgot-password" onClick={() => setIsMobileProfileOpen(false)} className="w-full text-left px-3 py-2 text-sm text-on-surface font-medium hover:bg-surface-container-high rounded-xl transition-colors block">
+                    Reset Password
+                  </Link>
+                </div>
+                <div className="px-2 pb-1 border-t border-outline-variant/20 pt-2">
+                  <button onClick={logout} className="w-full text-left px-3 py-2 text-sm text-error font-medium hover:bg-error-container/20 rounded-xl transition-colors">
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <button onClick={() => setIsMobileMenuOpen(true)} className="text-on-surface p-1 flex items-center">
+            <span className="material-symbols-outlined text-[28px]">menu</span>
+          </button>
+        </div>
       </div>
 
       {/* SideNavBar */}
@@ -107,16 +143,25 @@ export default function Layout({ children }) {
         ${isDesktopCollapsed ? 'md:w-20' : 'w-72'}
       `}>
         {/* Brand Header */}
-        <div className={`flex items-center mb-8 mt-2 ${isDesktopCollapsed ? 'justify-center' : 'gap-4 px-2'}`}>
-          <div className="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-primary to-tertiary flex items-center justify-center text-on-primary shadow-lg">
-            <span className="material-symbols-outlined text-[24px]">school</span>
-          </div>
-          {!isDesktopCollapsed && (
-            <div className="whitespace-nowrap overflow-hidden">
-              <h1 className="font-headline-md text-headline-md font-bold text-primary text-base">LearnOS AI</h1>
-              <p className="font-label-md text-label-md text-on-surface-variant text-xs">Learn. Organize. Master.</p>
+        <div className={`flex items-center justify-between mb-8 mt-2 ${isDesktopCollapsed ? 'justify-center' : 'px-2'}`}>
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-primary to-tertiary flex items-center justify-center text-on-primary shadow-lg">
+              <span className="material-symbols-outlined text-[24px]">school</span>
             </div>
-          )}
+            {!isDesktopCollapsed && (
+              <div className="whitespace-nowrap overflow-hidden">
+                <h1 className="font-headline-md text-headline-md font-bold text-primary text-base">LearnOS AI</h1>
+                <p className="font-label-md text-label-md text-on-surface-variant text-xs">Learn. Organize. Master.</p>
+              </div>
+            )}
+          </div>
+          {/* Close button for mobile inside the sidebar */}
+          <button 
+            onClick={() => setIsMobileMenuOpen(false)} 
+            className="md:hidden text-on-surface-variant hover:text-on-surface p-1 rounded-full hover:bg-surface-container-high transition-colors"
+          >
+            <span className="material-symbols-outlined text-[24px]">close</span>
+          </button>
         </div>
 
         {/* Navigation Links */}
@@ -151,34 +196,6 @@ export default function Layout({ children }) {
               )}
             </NavLink>
           ))}
-        </div>
-        
-        {/* Mobile Profile Actions (Only visible on mobile) */}
-        <div className="md:hidden mt-auto pt-4 border-t border-outline-variant/20 flex flex-col gap-2 px-2">
-          <div className="flex items-center gap-3 px-3 py-2">
-             <div className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm shrink-0">
-                {user?.name?.charAt(0).toUpperCase() || 'U'}
-             </div>
-             <div className="flex flex-col overflow-hidden">
-                <span className="text-sm font-semibold text-on-surface truncate">{user?.name}</span>
-                <span className="text-[10px] text-on-surface-variant truncate">{user?.email}</span>
-             </div>
-          </div>
-          <Link 
-            to="/forgot-password" 
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center gap-4 px-3 py-3 rounded-xl transition-all duration-200 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50"
-          >
-            <span className="material-symbols-outlined text-[24px]">lock_reset</span>
-            <span className="font-label-md text-label-md">Reset Password</span>
-          </Link>
-          <button 
-            onClick={logout}
-            className="flex items-center gap-4 px-3 py-3 rounded-xl transition-all duration-200 text-error hover:bg-error-container/20 w-full text-left"
-          >
-            <span className="material-symbols-outlined text-[24px]">logout</span>
-            <span className="font-label-md text-label-md">Sign out</span>
-          </button>
         </div>
         
         {/* Study Sidebar Widgets (Only when expanded) */}
@@ -277,30 +294,30 @@ export default function Layout({ children }) {
         </button>
 
         {/* System Status Footer */}
-        <div className={`mt-auto pt-4 border-t border-outline-variant/20 flex flex-col gap-3 ${isDesktopCollapsed ? 'items-center' : 'px-2'}`}>
+        <div className={`mt-auto pt-3 border-t border-outline-variant/20 flex ${isDesktopCollapsed ? 'flex-col items-center gap-3' : 'flex-row justify-between px-2'} shrink-0`}>
            
-           <div className={`flex items-center ${isDesktopCollapsed ? 'justify-center' : 'gap-2'}`}>
-             <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${aiStatus === 'online' ? 'bg-secondary shadow-[0_0_8px_rgba(0,106,103,0.6)]' : 'bg-error shadow-[0_0_8px_rgba(186,26,26,0.6)]'}`} title={`AI Engine ${aiStatus}`}></span>
+           <div className="flex items-center gap-1.5" title={`AI Engine ${aiStatus}`}>
+             <span className={`w-2 h-2 rounded-full shrink-0 ${aiStatus === 'online' ? 'bg-secondary shadow-[0_0_4px_rgba(0,106,103,0.5)]' : 'bg-error shadow-[0_0_4px_rgba(186,26,26,0.5)]'}`}></span>
              {!isDesktopCollapsed && (
-               <span className="text-[10px] font-label-md text-on-surface-variant uppercase tracking-widest font-semibold flex-1">
-                 AI Engine <span className={aiStatus === 'online' ? 'text-secondary' : 'text-error'}>{aiStatus}</span>
+               <span className="text-[9px] text-on-surface-variant uppercase tracking-wider font-bold">
+                 AI: <span className={aiStatus === 'online' ? 'text-secondary' : 'text-error'}>{aiStatus}</span>
                </span>
              )}
            </div>
 
-           <div className={`flex items-center ${isDesktopCollapsed ? 'justify-center' : 'gap-2'}`}>
-             <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${dbStatus === 'online' ? 'bg-primary shadow-[0_0_8px_rgba(111,66,193,0.6)]' : 'bg-error shadow-[0_0_8px_rgba(186,26,26,0.6)]'}`} title={`Database ${dbStatus}`}></span>
+           <div className="flex items-center gap-1.5" title={`Database ${dbStatus}`}>
+             <span className={`w-2 h-2 rounded-full shrink-0 ${dbStatus === 'online' ? 'bg-primary shadow-[0_0_4px_rgba(111,66,193,0.5)]' : 'bg-error shadow-[0_0_4px_rgba(186,26,26,0.5)]'}`}></span>
              {!isDesktopCollapsed && (
-               <div className="flex-1 flex items-center justify-between">
-                 <span className="text-[10px] font-label-md text-on-surface-variant uppercase tracking-widest font-semibold">
-                   Database <span className={dbStatus === 'online' ? 'text-primary' : 'text-error'}>{dbStatus}</span>
+               <div className="flex items-center gap-1">
+                 <span className="text-[9px] text-on-surface-variant uppercase tracking-wider font-bold">
+                   DB: <span className={dbStatus === 'online' ? 'text-primary' : 'text-error'}>{dbStatus}</span>
                  </span>
                  {dbStatus !== 'online' && (
                    <button 
                      onClick={() => checkHealth().then(res => { setDbStatus(res.data.db_status); setAiStatus(res.data.ai_status); })} 
-                     className="text-[9px] bg-surface-container-high hover:bg-surface-container-highest px-2 py-0.5 rounded border border-outline-variant/20 transition-colors"
+                     className="text-[8px] bg-surface-container hover:bg-surface-container-highest px-1 rounded border border-outline-variant/20 transition-colors"
                    >
-                     Wake Up
+                     ↻
                    </button>
                  )}
                </div>
