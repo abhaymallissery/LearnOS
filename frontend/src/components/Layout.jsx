@@ -153,6 +153,34 @@ export default function Layout({ children }) {
           ))}
         </div>
         
+        {/* Mobile Profile Actions (Only visible on mobile) */}
+        <div className="md:hidden mt-auto pt-4 border-t border-outline-variant/20 flex flex-col gap-2 px-2">
+          <div className="flex items-center gap-3 px-3 py-2">
+             <div className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm shrink-0">
+                {user?.name?.charAt(0).toUpperCase() || 'U'}
+             </div>
+             <div className="flex flex-col overflow-hidden">
+                <span className="text-sm font-semibold text-on-surface truncate">{user?.name}</span>
+                <span className="text-[10px] text-on-surface-variant truncate">{user?.email}</span>
+             </div>
+          </div>
+          <Link 
+            to="/forgot-password" 
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="flex items-center gap-4 px-3 py-3 rounded-xl transition-all duration-200 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50"
+          >
+            <span className="material-symbols-outlined text-[24px]">lock_reset</span>
+            <span className="font-label-md text-label-md">Reset Password</span>
+          </Link>
+          <button 
+            onClick={logout}
+            className="flex items-center gap-4 px-3 py-3 rounded-xl transition-all duration-200 text-error hover:bg-error-container/20 w-full text-left"
+          >
+            <span className="material-symbols-outlined text-[24px]">logout</span>
+            <span className="font-label-md text-label-md">Sign out</span>
+          </button>
+        </div>
+        
         {/* Study Sidebar Widgets (Only when expanded) */}
         {!isDesktopCollapsed && (
           <div className="flex flex-col gap-4 overflow-y-auto custom-scrollbar flex-grow pt-4 border-t border-outline-variant/20">

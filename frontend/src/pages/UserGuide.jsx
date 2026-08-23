@@ -1,128 +1,235 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+const guideData = [
+  {
+    id: 'dashboard',
+    title: 'Dashboard',
+    icon: 'space_dashboard',
+    color: 'from-blue-500 to-indigo-600',
+    content: (
+      <div className="space-y-6">
+        <h2 className="text-3xl font-bold text-on-surface mb-6">Dashboard Guide</h2>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 1: Overview</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            The dashboard is your central hub. It provides a quick summary of your learning progress, recent activities, and upcoming reviews.
+          </p>
+        </div>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 2: Daily Targets</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            Keep yourself accountable by setting daily study targets. You can track your consistency and streaks directly from the home screen.
+          </p>
+        </div>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 3: Quick Navigation</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            Use the quick action buttons to instantly jump back into your last AI Chat, resume a pending quiz, or review your flashcards for the day.
+          </p>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'library',
+    title: 'Library (Knowledge Base)',
+    icon: 'library_books',
+    color: 'from-purple-500 to-fuchsia-600',
+    content: (
+      <div className="space-y-6">
+        <h2 className="text-3xl font-bold text-on-surface mb-6">Library Guide</h2>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 1: Create a Subject</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            First, you need to create a subject. In the Library collection, you will see an option for <strong>"New Subject"</strong>. Type your subject name and press the <strong>plus icon</strong> to create it.
+          </p>
+        </div>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 2: Upload Knowledge</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            Click on that subject to open it. Inside, you can upload files (like PDFs) or paste English video/website links to build your knowledge base for that subject.
+          </p>
+        </div>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 3: Check Indexing Status</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            Below your uploaded files, you will see a status. If it says <strong>"Indexed"</strong>, it means everything uploaded and processed correctly! If it says <strong>"Failed"</strong>, please upload it one more time to ensure it becomes indexed.
+          </p>
+        </div>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 4: Ready for AI</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            After the documents are successfully indexed, you can now use the <strong>AI Chat</strong> to ask questions related to this knowledge, or use the <strong>Exam Center</strong> to generate quizzes!
+          </p>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'chat',
+    title: 'AI Chat',
+    icon: 'forum',
+    color: 'from-pink-500 to-rose-600',
+    content: (
+      <div className="space-y-6">
+        <h2 className="text-3xl font-bold text-on-surface mb-6">AI Chat Guide</h2>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 1: Select a Subject</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            Before chatting, select a subject you have already created and indexed in your Library. The AI will restrict its knowledge strictly to the files within that subject.
+          </p>
+        </div>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 2: Ask Questions</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            Ask the AI to explain complex topics, summarize large documents, or find specific details. It acts as your personal tutor that has memorized your textbooks.
+          </p>
+        </div>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 3: Chat History</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            Your conversations are automatically saved. You can access previous chat sessions from the sidebar to resume a study session right where you left off.
+          </p>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'exam',
+    title: 'Exam Center',
+    icon: 'quiz',
+    color: 'from-amber-400 to-orange-500',
+    content: (
+      <div className="space-y-6">
+        <h2 className="text-3xl font-bold text-on-surface mb-6">Exam Center Guide</h2>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 1: Choose your Source</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            Select an indexed subject from your Library. The AI will read through the material and prepare a customized test for you.
+          </p>
+        </div>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 2: Generate Quiz</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            Specify how many questions you want and click Generate. The AI will instantly create a multiple-choice quiz that tests your actual understanding of the concepts.
+          </p>
+        </div>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 3: Review Explanations</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            After submitting your answers, you can review your score. For every question, the AI provides a detailed explanation of why the correct answer is right and why the others are wrong.
+          </p>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'revision',
+    title: 'Revision Center',
+    icon: 'calendar_month',
+    color: 'from-teal-400 to-cyan-500',
+    content: (
+      <div className="space-y-6">
+        <h2 className="text-3xl font-bold text-on-surface mb-6">Revision Center Guide</h2>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 1: Select a Date</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            On the left side, you will see a calendar. Select any date to see your scheduled revision tasks for that day.
+          </p>
+        </div>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 2: View Daily Summary</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            When you select a date, the big screen on the right will display a complete summary of everything you need to review. The AI uses Spaced Repetition to ensure you review topics right before you are about to forget them.
+          </p>
+        </div>
+        <div className="bg-surface-container/30 p-6 rounded-2xl border border-outline-variant/20">
+          <h3 className="text-xl font-bold text-primary mb-3">Step 3: Complete Reviews</h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            Go through your flashcards and mark how well you remembered them. The AI will automatically reschedule them for the future based on your performance.
+          </p>
+        </div>
+      </div>
+    )
+  }
+];
+
 export default function UserGuide() {
-  const steps = [
-    {
-      id: 1,
-      title: "Step 1: Build Your Library",
-      description: "Upload PDFs or enter URLs to create your personal knowledge base. The AI reads and understands everything you add.",
-      icon: "📚",
-      color: "from-blue-500 to-indigo-600",
-      link: "/library",
-      linkText: "Go to Library"
-    },
-    {
-      id: 2,
-      title: "Step 2: Interact & Learn",
-      description: "Ask questions, get summaries, or request explanations. The AI Chat only answers using the documents you've uploaded, ensuring accuracy.",
-      icon: "💬",
-      color: "from-purple-500 to-fuchsia-600",
-      link: "/chat",
-      linkText: "Start Chatting"
-    },
-    {
-      id: 3,
-      title: "Step 3: Create a Study Plan",
-      description: "Organize subjects into manageable topics, track your daily tasks, and write manual 'Smart Notes' that are instantly reviewed by the AI.",
-      icon: "🗺️",
-      color: "from-pink-500 to-rose-600",
-      link: "/study-plan",
-      linkText: "Plan Your Studies"
-    },
-    {
-      id: 4,
-      title: "Step 4: Test Yourself",
-      description: "Generate customized multiple-choice quizzes from your study material or your manual notes. Great for active recall.",
-      icon: "📝",
-      color: "from-amber-400 to-orange-500",
-      link: "/exam",
-      linkText: "Take a Quiz"
-    },
-    {
-      id: 5,
-      title: "Step 5: Retain Knowledge",
-      description: "Use the Revision Center's spaced repetition system. The AI schedules your flashcards optimally so you never forget what you've learned.",
-      icon: "🧠",
-      color: "from-teal-400 to-cyan-500",
-      link: "/revision",
-      linkText: "Go to Revision Center"
-    },
-    {
-      id: 6,
-      title: "Step 6: Track Progress",
-      description: "Monitor your learning streak, quiz scores, and view dynamic recommendations on what to study next based on your weak points.",
-      icon: "📊",
-      color: "from-emerald-400 to-teal-500",
-      link: "/analytics",
-      linkText: "View Analytics"
-    }
-  ];
+  const [activeTab, setActiveTab] = useState(guideData[1].id); // Default to Library
+
+  const activeContent = guideData.find(g => g.id === activeTab);
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row bg-[#0d0e12] overflow-hidden font-body-md animate-in fade-in duration-500">
       
-      <div className="text-center mb-16 relative">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle,rgba(111,66,193,0.1)_0%,transparent_70%)] blur-3xl rounded-full opacity-50 transform scale-150"></div>
-        <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-tertiary tracking-tight mb-4">
-          Welcome to LearnOS AI
-        </h1>
-        <p className="text-lg text-on-surface-variant max-w-2xl mx-auto">
-          Your personal AI second brain. Here's a quick guide on how to transform your study material into an interactive learning experience.
-        </p>
-      </div>
-
-      {/* Steps Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {steps.map((step) => (
-          <div 
-            key={step.id} 
-            className="group relative bg-surface-container/40 backdrop-blur-xl rounded-3xl p-8 shadow-sm border border-outline-variant/20 hover:-translate-y-2 transition-all duration-300 overflow-hidden"
-          >
-            {/* Colorful Background Blob */}
-            <div className={`absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br ${step.color} rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity duration-300`}></div>
-            
-            <div className="flex items-start gap-6 relative z-10">
-              <div className={`flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-lg bg-gradient-to-br ${step.color} text-white transform group-hover:scale-110 transition-transform duration-300`}>
-                {step.icon}
+      {/* Sidebar Navigation */}
+      <div className="w-full md:w-80 bg-[#121317] border-b md:border-b-0 md:border-r border-white/5 flex flex-col h-auto md:h-full overflow-y-auto shrink-0">
+        <div className="p-6 pb-2">
+          <h1 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#ddb7ff] to-[#98f2ed] tracking-tight mb-2">
+            User Guide
+          </h1>
+          <p className="text-sm text-[#ccc3d5]">
+            Learn how to use every feature effectively.
+          </p>
+        </div>
+        
+        <div className="p-4 space-y-2">
+          {guideData.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-200 text-left ${
+                activeTab === tab.id 
+                  ? 'bg-surface-container-high shadow-lg border border-white/10' 
+                  : 'hover:bg-surface-container hover:translate-x-1 border border-transparent'
+              }`}
+            >
+              <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-md bg-gradient-to-br ${tab.color} text-white`}>
+                <span className="material-symbols-outlined text-[20px]">{tab.icon}</span>
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-on-surface mb-2">
-                  {step.title}
+                <h3 className={`font-bold ${activeTab === tab.id ? 'text-primary' : 'text-on-surface'}`}>
+                  {tab.title}
                 </h3>
-                <p className="text-on-surface-variant mb-6 leading-relaxed">
-                  {step.description}
-                </p>
-                <Link 
-                  to={step.link}
-                  className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary-fixed transition-colors"
-                >
-                  {step.linkText}
-                  <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
               </div>
-            </div>
-          </div>
-        ))}
+              {activeTab === tab.id && (
+                <span className="material-symbols-outlined text-primary ml-auto">chevron_right</span>
+              )}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Footer Banner */}
-      <div className="mt-16 bg-gradient-to-r from-primary to-tertiary rounded-3xl p-8 text-center text-on-primary shadow-lg relative overflow-hidden">
-        <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
-        <div className="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-white opacity-10 rounded-full blur-xl"></div>
-        
-        <h2 className="text-2xl font-bold mb-2 relative z-10">Ready to start learning?</h2>
-        <p className="text-primary-fixed mb-6 max-w-xl mx-auto relative z-10 font-body-md">
-          Head over to the Dashboard to see your personalized recommendations, or upload your first document in the Library!
-        </p>
-        <Link 
-          to="/"
-          className="relative z-10 inline-block bg-surface text-primary font-bold py-3 px-8 rounded-full shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300"
-        >
-          Go to Dashboard
-        </Link>
+      {/* Main Content Area (Big Screen) */}
+      <div className="flex-1 bg-[#0d0e12] relative overflow-y-auto">
+        {/* Background Gradients */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none fixed">
+          <div className="absolute top-[-10%] left-[20%] w-[40%] h-[40%] bg-[radial-gradient(circle,rgba(111,66,193,0.1)_0%,transparent_70%)] rounded-full blur-3xl"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[radial-gradient(circle,rgba(0,119,116,0.1)_0%,transparent_70%)] rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="max-w-4xl mx-auto p-6 md:p-12 relative z-10">
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 key={activeTab}">
+            
+            {/* Header of Active Tab */}
+            <div className="flex items-center gap-6 mb-8 border-b border-white/5 pb-8">
+              <div className={`flex-shrink-0 w-20 h-20 rounded-3xl flex items-center justify-center shadow-xl bg-gradient-to-br ${activeContent.color} text-white`}>
+                <span className="material-symbols-outlined text-[40px]">{activeContent.icon}</span>
+              </div>
+              <div>
+                <p className="text-[#98f2ed] font-semibold text-sm tracking-wider uppercase mb-1">Step-by-Step Guide</p>
+                <h1 className="text-4xl md:text-5xl font-extrabold text-[#e3e2e8]">
+                  {activeContent.title}
+                </h1>
+              </div>
+            </div>
+
+            {/* Content of Active Tab */}
+            {activeContent.content}
+
+          </div>
+        </div>
       </div>
 
     </div>
