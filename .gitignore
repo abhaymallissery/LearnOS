@@ -7,13 +7,5 @@ backend/storage/
 .env
 *.db
 
-venv/
-code.md
-host.md
-note.md
-HOSTING_ON_HUGGINGFACE.md
-create_zip.py
-install.sh
-start.sh
-app.py
-Dockerfile.huggingface
+
+
