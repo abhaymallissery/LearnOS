@@ -140,14 +140,7 @@ docker compose up --build
 
 ---
 
-## Free deployment
 
-See **[HOSTING_ON_HUGGINGFACE.md](./HOSTING_ON_HUGGINGFACE.md)** for a full,
-step-by-step guide to deploying the entire platform on a free Hugging Face
-Space (Docker SDK) — including how to run a CPU-friendly Ollama model on
-the free tier.
-
----
 
 ## Notes for reviewers / resume use
 
