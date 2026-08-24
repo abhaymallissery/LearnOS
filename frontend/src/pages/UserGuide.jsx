@@ -161,15 +161,15 @@ export default function UserGuide() {
   const activeContent = guideData.find(g => g.id === activeTab);
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row bg-[#0d0e12] overflow-hidden font-body-md animate-in fade-in duration-500">
+    <div className="h-[calc(100vh-4rem)] flex flex-col md:flex-row bg-background overflow-hidden font-body-md animate-in fade-in duration-500">
       
       {/* Sidebar Navigation */}
-      <div className="w-full md:w-80 bg-[#121317] border-b md:border-b-0 md:border-r border-white/5 flex flex-col h-auto md:h-full overflow-y-auto shrink-0">
+      <div className="w-full md:w-80 bg-surface border-b md:border-b-0 md:border-r border-outline-variant/20 flex flex-col h-auto md:h-full overflow-y-auto shrink-0">
         <div className="p-6 pb-2">
-          <h1 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#ddb7ff] to-[#98f2ed] tracking-tight mb-2">
+          <h1 className="text-2xl font-extrabold text-primary tracking-tight mb-2">
             User Guide
           </h1>
-          <p className="text-sm text-[#ccc3d5]">
+          <p className="text-sm text-on-surface-variant">
             Learn how to use every feature effectively.
           </p>
         </div>
@@ -181,7 +181,7 @@ export default function UserGuide() {
               onClick={() => setActiveTab(tab.id)}
               className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-200 text-left ${
                 activeTab === tab.id 
-                  ? 'bg-surface-container-high shadow-lg border border-white/10' 
+                  ? 'bg-surface-container-high shadow-lg border border-outline-variant/30' 
                   : 'hover:bg-surface-container hover:translate-x-1 border border-transparent'
               }`}
             >
@@ -202,7 +202,7 @@ export default function UserGuide() {
       </div>
 
       {/* Main Content Area (Big Screen) */}
-      <div className="flex-1 bg-[#0d0e12] relative overflow-y-auto">
+      <div className="flex-1 bg-background relative overflow-y-auto">
         {/* Background Gradients */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none fixed">
           <div className="absolute top-[-10%] left-[20%] w-[40%] h-[40%] bg-[radial-gradient(circle,rgba(111,66,193,0.1)_0%,transparent_70%)] rounded-full blur-3xl"></div>
@@ -213,13 +213,13 @@ export default function UserGuide() {
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 key={activeTab}">
             
             {/* Header of Active Tab */}
-            <div className="flex items-center gap-6 mb-8 border-b border-white/5 pb-8">
+            <div className="flex items-center gap-6 mb-8 border-b border-outline-variant/20 pb-8">
               <div className={`flex-shrink-0 w-20 h-20 rounded-3xl flex items-center justify-center shadow-xl bg-gradient-to-br ${activeContent.color} text-white`}>
                 <span className="material-symbols-outlined text-[40px]">{activeContent.icon}</span>
               </div>
               <div>
-                <p className="text-[#98f2ed] font-semibold text-sm tracking-wider uppercase mb-1">Step-by-Step Guide</p>
-                <h1 className="text-4xl md:text-5xl font-extrabold text-[#e3e2e8]">
+                <p className="text-secondary font-semibold text-sm tracking-wider uppercase mb-1">Step-by-Step Guide</p>
+                <h1 className="text-4xl md:text-5xl font-extrabold text-on-surface">
                   {activeContent.title}
                 </h1>
               </div>
