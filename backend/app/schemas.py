@@ -20,6 +20,7 @@ class UserOut(BaseModel):
     name: str
     email: str
     is_verified: bool = False
+    reward_points: int = 0
 
     class Config:
         from_attributes = True
@@ -170,11 +171,16 @@ class DailyStudyTaskCreate(BaseModel):
     description: str
     target_id: Optional[str] = None
 
+class DailyStudyTaskUpdate(BaseModel):
+    description: Optional[str] = None
+    completion_note: Optional[str] = None
+
 class DailyStudyTaskOut(BaseModel):
     id: str
     target_id: Optional[str] = None
     description: str
     is_completed: bool
+    completion_note: Optional[str] = None
 
     class Config:
         orm_mode = True

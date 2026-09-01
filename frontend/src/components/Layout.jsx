@@ -19,7 +19,7 @@ const NAV_ITEMS = [
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
-  const { studyTargets, dailyTasks, toggleTask, addTask, clearDailyTasks } = useStudyData();
+  const { studyTargets, dailyTasks, toggleTask, addTask, editTask, clearDailyTasks } = useStudyData();
   const [aiStatus, setAiStatus] = useState("checking...");
   const [dbStatus, setDbStatus] = useState("checking...");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -33,6 +33,12 @@ export default function Layout({ children }) {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [isDailyPlanModalOpen, setIsDailyPlanModalOpen] = useState(false);
   const [newTaskInput, setNewTaskInput] = useState("");
+
+  const [editingTaskId, setEditingTaskId] = useState(null);
+  const [editTaskInput, setEditTaskInput] = useState("");
+  const [taskToComplete, setTaskToComplete] = useState(null);
+  const [completionNote, setCompletionNote] = useState("");
+  const [showConfetti, setShowConfetti] = useState(false);
   
   const dropdownRef = useRef(null);
   const mobileDropdownRef = useRef(null);
@@ -93,6 +99,39 @@ export default function Layout({ children }) {
     setNewTaskInput("");
   };
 
+  const handleEditSubmit = async (e, id) => {
+    e.preventDefault();
+    if (editTaskInput.trim()) {
+      await editTask(id, { description: editTaskInput });
+    }
+    setEditingTaskId(null);
+  };
+
+  const handleTaskCheck = (task) => {
+    if (task.is_completed) {
+      // Unchecking is instant
+      toggleTask(task.id);
+    } else {
+      // Checking pops up the note modal
+      setTaskToComplete(task.id);
+      setCompletionNote(task.completion_note || "");
+    }
+  };
+
+  const handleCompleteWithNote = (e) => {
+    e.preventDefault();
+    if (taskToComplete) {
+      if (completionNote.trim()) {
+         editTask(taskToComplete, { completion_note: completionNote });
+      }
+      toggleTask(taskToComplete);
+      setTaskToComplete(null);
+      setCompletionNote("");
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 2000);
+    }
+  };
+
   return (
     <div className="bg-background text-on-background min-h-screen font-body-md overflow-x-hidden selection:bg-primary/30 selection:text-primary relative">
       
@@ -103,12 +142,17 @@ export default function Layout({ children }) {
         <div className="flex items-center gap-3">
           {/* Mobile Profile Dropdown */}
           <div className="relative" ref={mobileDropdownRef}>
-            <button 
-              onClick={() => setIsMobileProfileOpen(!isMobileProfileOpen)}
-              className="w-8 h-8 rounded-full border border-outline-variant/20 overflow-hidden hover:border-primary transition-colors flex items-center justify-center bg-primary text-on-primary font-bold shadow-md"
-            >
-              {user?.name?.charAt(0).toUpperCase() || 'U'}
-            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-secondary bg-secondary/10 px-2 py-1 rounded-full border border-secondary/20">
+                ⭐ {user?.reward_points || 0}
+              </span>
+              <button 
+                onClick={() => setIsMobileProfileOpen(!isMobileProfileOpen)}
+                className="w-8 h-8 rounded-full border border-outline-variant/20 overflow-hidden hover:border-primary transition-colors flex items-center justify-center bg-primary text-on-primary font-bold shadow-md"
+              >
+                {user?.name?.charAt(0).toUpperCase() || 'U'}
+              </button>
+            </div>
             {isMobileProfileOpen && (
               <div className="absolute top-10 right-0 mt-2 w-56 rounded-2xl shadow-xl bg-surface border border-outline-variant/20 py-2 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
                 <div className="px-4 py-3 border-b border-outline-variant/20">
@@ -216,27 +260,75 @@ export default function Layout({ children }) {
                   <p className="text-xs text-outline italic">No tasks for today.</p>
                 ) : (
                   dailyTasks.map(task => (
-                    <label key={task.id} className="flex items-start gap-2 group cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        checked={task.is_completed}
-                        onChange={() => toggleTask(task.id)}
-                        className="mt-1 w-4 h-4 rounded-full border-2 border-outline text-primary focus:ring-primary focus:ring-offset-surface bg-transparent checked:bg-primary checked:border-primary transition-all cursor-pointer" 
-                      />
-                      <span className={`text-sm transition-all ${task.is_completed ? 'line-through text-outline' : 'text-on-surface-variant group-hover:text-on-surface'}`}>
-                        {task.description}
-                      </span>
-                    </label>
+                    <div key={task.id} className="group relative">
+                      {editingTaskId === task.id ? (
+                        <form onSubmit={(e) => handleEditSubmit(e, task.id)} className="flex items-center gap-1">
+                          <input 
+                            autoFocus
+                            value={editTaskInput}
+                            onChange={(e) => setEditTaskInput(e.target.value)}
+                            onBlur={(e) => handleEditSubmit(e, task.id)}
+                            className="w-full text-sm bg-surface border border-primary/50 rounded px-2 py-1 focus:outline-none"
+                          />
+                        </form>
+                      ) : (
+                        <div className="flex items-start gap-2">
+                          <input 
+                            type="checkbox" 
+                            checked={task.is_completed}
+                            onChange={() => handleTaskCheck(task)}
+                            className="mt-1 w-4 h-4 rounded-full border-2 border-outline text-primary focus:ring-primary focus:ring-offset-surface bg-transparent checked:bg-primary checked:border-primary transition-all cursor-pointer shrink-0" 
+                          />
+                          <div className="flex flex-col w-full min-w-0 pr-6">
+                            <span 
+                              className={`text-sm transition-all break-words ${task.is_completed ? 'line-through text-outline' : 'text-on-surface-variant group-hover:text-on-surface'}`}
+                              title={task.description}
+                            >
+                              {task.description}
+                            </span>
+                            {task.completion_note && task.is_completed && (
+                              <span className="text-[10px] text-primary italic bg-primary/5 px-1.5 py-0.5 rounded mt-0.5 truncate border border-primary/10">
+                                📝 {task.completion_note}
+                              </span>
+                            )}
+                          </div>
+                          {!task.is_completed && (
+                            <button 
+                              onClick={() => { setEditingTaskId(task.id); setEditTaskInput(task.description); }}
+                              className="absolute right-0 top-0.5 text-outline hover:text-primary transition-opacity bg-surface-container rounded p-0.5"
+                              title="Edit Task"
+                            >
+                              <span className="material-symbols-outlined text-[14px]">edit</span>
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   ))
                 )}
               </div>
+              <div className="mb-3">
+                 <form onSubmit={handleQuickAdd} className="flex items-center bg-surface border border-outline-variant/30 rounded-lg overflow-hidden focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/50 transition-all">
+                    <input 
+                       type="text" 
+                       value={newTaskInput}
+                       onChange={(e) => setNewTaskInput(e.target.value)}
+                       placeholder="Add a quick task..."
+                       className="w-full bg-transparent text-sm px-3 py-1.5 focus:outline-none text-on-surface placeholder:text-outline"
+                    />
+                    <button type="submit" disabled={!newTaskInput.trim()} className="px-2 text-primary disabled:text-outline hover:text-primary-container transition-colors">
+                       <span className="material-symbols-outlined text-[18px] translate-y-[2px]">send</span>
+                    </button>
+                 </form>
+              </div>
+
               <div className="flex gap-2">
                  <button 
                     onClick={() => setIsDailyPlanModalOpen(true)}
                     className="w-full flex items-center justify-center gap-1 py-1.5 rounded-lg border border-outline-variant/30 text-xs text-on-surface hover:bg-surface-container-high transition-colors font-semibold"
                  >
-                    <span className="material-symbols-outlined text-[14px]">add_circle</span>
-                    Create Today's Plan
+                    <span className="material-symbols-outlined text-[14px]">calendar_add_on</span>
+                    Plan Multiple
                  </button>
                  <button 
                     onClick={() => {
@@ -387,6 +479,14 @@ export default function Layout({ children }) {
           
           {/* Trailing Actions */}
           <div className="flex items-center gap-4">
+            <div className="flex flex-col items-end justify-center px-4 py-1.5 bg-surface-container-high rounded-full border border-outline-variant/20 shadow-sm mr-2 group cursor-default hover:border-secondary/50 transition-colors">
+               <span className="text-[10px] uppercase font-bold text-on-surface-variant tracking-wider leading-none mb-0.5">Reward Points</span>
+               <div className="flex items-center gap-1.5 leading-none">
+                  <span className="text-secondary text-sm">⭐</span>
+                  <span className="font-extrabold text-on-surface text-base group-hover:text-secondary transition-colors">{user?.reward_points || 0}</span>
+               </div>
+            </div>
+            
             <button className="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-container-high">
               <span className="material-symbols-outlined">notifications</span>
             </button>
@@ -432,6 +532,67 @@ export default function Layout({ children }) {
         isOpen={isDailyPlanModalOpen} 
         onClose={() => setIsDailyPlanModalOpen(false)} 
       />
+
+      {/* Task Completion Note Modal */}
+      {taskToComplete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-surface border border-outline-variant/20 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200 relative overflow-hidden">
+            {/* Background decoration */}
+            <div className="absolute -top-12 -right-12 w-32 h-32 bg-secondary/10 rounded-full blur-2xl"></div>
+            
+            <div className="flex items-center gap-3 mb-6 relative z-10">
+              <div className="w-12 h-12 rounded-full bg-secondary/20 text-secondary flex items-center justify-center shrink-0">
+                 <span className="material-symbols-outlined text-[28px]">verified</span>
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-on-surface">Great job!</h2>
+                <p className="text-sm text-secondary font-medium">+10 Reward Points unlocked</p>
+              </div>
+            </div>
+            
+            <form onSubmit={handleCompleteWithNote} className="relative z-10 space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-on-surface-variant mb-2">Add a completion note (Optional)</label>
+                <textarea 
+                  value={completionNote}
+                  onChange={(e) => setCompletionNote(e.target.value)}
+                  placeholder="What did you learn? Any quick notes?"
+                  className="w-full bg-surface-container-high/50 border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface focus:outline-none focus:border-secondary/50 focus:ring-1 focus:ring-secondary/50 resize-none h-24"
+                  autoFocus
+                />
+              </div>
+              
+              <div className="flex justify-end gap-3 pt-2">
+                 <button 
+                   type="button" 
+                   onClick={() => setTaskToComplete(null)}
+                   className="px-5 py-2.5 rounded-full font-label-md text-sm text-on-surface-variant hover:bg-surface-container-high transition-colors"
+                 >
+                   Cancel
+                 </button>
+                 <button 
+                   type="submit"
+                   className="px-6 py-2.5 rounded-full font-label-md text-sm bg-gradient-to-r from-secondary to-tertiary text-on-primary shadow-lg shadow-secondary/20 hover:shadow-secondary/40 hover:scale-105 transition-all flex items-center gap-2"
+                 >
+                   <span>Claim Points</span>
+                   <span className="material-symbols-outlined text-[18px]">workspace_premium</span>
+                 </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Confetti Animation Overlay */}
+      {showConfetti && (
+        <div className="fixed inset-0 pointer-events-none z-[100] flex items-center justify-center overflow-hidden">
+           <div className="absolute text-6xl animate-ping text-secondary">⭐</div>
+           <div className="absolute text-5xl animate-bounce delay-75 text-primary -ml-20 -mt-20">🎉</div>
+           <div className="absolute text-5xl animate-bounce delay-150 text-tertiary ml-20 -mt-20">✨</div>
+           <div className="absolute text-5xl animate-bounce delay-200 text-secondary ml-10 mt-20">🏆</div>
+           <div className="absolute text-5xl animate-bounce delay-300 text-primary -ml-10 mt-20">🚀</div>
+        </div>
+      )}
     </div>
   );
 }

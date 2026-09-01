@@ -56,7 +56,31 @@ def toggle_task(task_id: str, db: Session = Depends(get_db), user: models.User =
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     
-    task.is_completed = not task.is_completed
+    if task.is_completed:
+        # Uncompleting: lose points
+        task.is_completed = False
+        user.reward_points = max(0, user.reward_points - 10)
+    else:
+        # Completing: gain points
+        task.is_completed = True
+        user.reward_points += 10
+
+    db.commit()
+    db.refresh(task)
+    db.refresh(user) # refresh user to get new points
+    return task
+
+@router.put("/tasks/{task_id}", response_model=schemas.DailyStudyTaskOut)
+def edit_task(task_id: str, payload: schemas.DailyStudyTaskUpdate, db: Session = Depends(get_db), user: models.User = Depends(get_current_user)):
+    task = db.query(models.DailyStudyTask).filter(models.DailyStudyTask.id == task_id, models.DailyStudyTask.user_id == user.id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    if payload.description is not None:
+        task.description = payload.description
+    if payload.completion_note is not None:
+        task.completion_note = payload.completion_note
+        
     db.commit()
     db.refresh(task)
     return task

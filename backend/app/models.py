@@ -18,6 +18,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
     is_verified = Column(Boolean, default=False)
+    reward_points = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     subjects = relationship("Subject", back_populates="owner", cascade="all, delete")
@@ -205,6 +206,7 @@ class DailyStudyTask(Base):
     user_id = Column(String, ForeignKey("users.id"))
     description = Column(String, nullable=False)
     is_completed = Column(Boolean, default=False)
+    completion_note = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     target = relationship("StudyTarget", back_populates="tasks")

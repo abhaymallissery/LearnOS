@@ -103,6 +103,7 @@ export const createStudyTarget = (data) => api.post("/api/study_targets", data);
 export const deleteStudyTarget = (id) => api.delete(`/api/study_targets/${id}`);
 export const addStudyTask = (targetId, data) => api.post(`/api/study_targets/${targetId}/tasks`, data);
 export const toggleStudyTask = (taskId) => api.patch(`/api/study_targets/tasks/${taskId}/toggle`);
+export const editStudyTask = (taskId, data) => api.put(`/api/study_targets/tasks/${taskId}`, data);
 export const deleteStudyTask = (taskId) => api.delete(`/api/study_targets/tasks/${taskId}`);
 export const getGlobalDailyTasks = () => api.get("/api/study_targets/tasks");
 export const resetGlobalDailyTasks = () => api.delete("/api/study_targets/tasks/reset");

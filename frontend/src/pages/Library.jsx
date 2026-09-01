@@ -79,16 +79,24 @@ export default function Library() {
   };
 
   const handleUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file || !activeSubject) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0 || !activeSubject) return;
+    
     setUploading(true);
-    try {
-      const res = await uploadDocument(activeSubject, file);
-      setDocuments((prev) => [res.data, ...prev]);
-    } finally {
-      setUploading(false);
-      e.target.value = "";
+    
+    // Process files sequentially to avoid hitting backend timeouts or API rate limits
+    for (const file of files) {
+      try {
+        const res = await uploadDocument(activeSubject, file);
+        setDocuments((prev) => [res.data, ...prev]);
+      } catch (err) {
+        console.error(`Failed to upload ${file.name}`, err);
+        alert(`Failed to upload ${file.name}. Other files will continue processing.`);
+      }
     }
+    
+    setUploading(false);
+    e.target.value = "";
   };
 
   const handleUrlSubmit = async (e) => {
@@ -287,6 +295,7 @@ export default function Library() {
                 className="hidden"
                 onChange={handleUpload}
                 accept=".pdf,.docx,.pptx,.txt,.md"
+                multiple
                 disabled={uploading || !activeSubject}
               />
             </label>

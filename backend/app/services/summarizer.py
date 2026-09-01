@@ -222,9 +222,12 @@ def answer_from_context(question: str, context_chunks: list[str]) -> str:
         resp = llm.invoke(prompt.format(context=context, question=question))
         return resp.content.strip()
     except Exception:
-        fallback_msg = "⚠️ *AI service is currently offline. Here are the most relevant excerpts from your materials instead:*\n\n"
-        excerpts = [f"- {chunk[:400]}..." for chunk in context_chunks]
-        return fallback_msg + "\n\n".join(excerpts)
+        fallback_msg = "⚠️ **AI Service is currently offline.**\n\nI couldn't generate a conversational answer, but I found these relevant excerpts in your materials:\n\n"
+        excerpts = []
+        for i, chunk in enumerate(context_chunks):
+            clean_chunk = chunk[:500].strip().replace('\n', ' ')
+            excerpts.append(f"### Excerpt {i+1}\n> {clean_chunk}...\n")
+        return fallback_msg + "\n".join(excerpts)
 
 
 MANUAL_NOTE_REVIEW_PROMPT = ChatPromptTemplate.from_template(
