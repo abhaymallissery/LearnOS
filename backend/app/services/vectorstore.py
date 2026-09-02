@@ -18,11 +18,16 @@ def get_embeddings():
     global _embeddings
     if _embeddings is None:
         try:
-            _embeddings = HuggingFaceEmbeddings(
-                model_name="all-MiniLM-L6-v2"
-            )
+            if settings.GEMINI_API_KEY:
+                from langchain_google_genai import GoogleGenerativeAIEmbeddings
+                _embeddings = GoogleGenerativeAIEmbeddings(
+                    model="models/text-embedding-004",
+                    google_api_key=settings.GEMINI_API_KEY
+                )
+            else:
+                _embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
         except Exception as e:
-            print(f"Failed to initialize HuggingFace embeddings: {e}")
+            print(f"Failed to initialize embeddings: {e}")
             from langchain_community.embeddings import FakeEmbeddings
             _embeddings = FakeEmbeddings(size=384)
     return _embeddings
@@ -35,7 +40,7 @@ def get_vectorstore():
         if db_url and db_url.startswith("postgres://"):
             db_url = db_url.replace("postgres://", "postgresql://", 1)
         _store = PGVector(
-            collection_name="learnos_collection_v2",
+            collection_name="learnos_collection_v3",
             connection=db_url,
             embeddings=get_embeddings(),
             use_jsonb=True,

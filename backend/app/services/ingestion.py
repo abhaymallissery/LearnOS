@@ -41,16 +41,11 @@ def process_document(document_id: str, db: Session):
         doc.status = "indexed"
         db.commit()
     except Exception as exc:  # pragma: no cover - defensive path
+        print(f"Document processing failed: {exc}")
         db.rollback()
         doc = db.query(models.Document).filter(models.Document.id == document_id).first()
         if doc:
-            if getattr(doc, 'file_path', None) and os.path.exists(doc.file_path):
-                try: os.remove(doc.file_path)
-                except: pass
-            if getattr(doc, 'raw_text_path', None) and os.path.exists(doc.raw_text_path):
-                try: os.remove(doc.raw_text_path)
-                except: pass
-            db.delete(doc)
+            doc.status = "failed"
             db.commit()
 
 

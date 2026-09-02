@@ -59,6 +59,10 @@ export default function Library() {
     if (activeSubject && hasProcessingDocs) {
       intervalId = setInterval(() => {
         listDocuments(activeSubject).then((res) => {
+          const newlyFailed = res.data.filter(d => d.status === "failed").length > documents.filter(d => d.status === "failed").length;
+          if (newlyFailed) {
+            alert("Upload failed: The AI server is temporarily busy. Please try again in 5 minutes.");
+          }
           setDocuments(res.data);
         });
       }, 5000); // Check every 5 seconds
@@ -82,6 +86,12 @@ export default function Library() {
     const files = Array.from(e.target.files || []);
     if (files.length === 0 || !activeSubject) return;
     
+    if (files.length > 7) {
+      alert("Please upload a maximum of 7 files at a time to prevent server overload.");
+      e.target.value = "";
+      return;
+    }
+
     setUploading(true);
     
     // Process files sequentially to avoid hitting backend timeouts or API rate limits

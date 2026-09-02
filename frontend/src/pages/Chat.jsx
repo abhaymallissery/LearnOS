@@ -304,7 +304,7 @@ export default function Chat() {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col relative w-full h-full max-w-4xl mx-auto">
         {/* Messages Scroll Area */}
-        <div className="flex-1 overflow-y-auto chat-scroll p-4 md:p-8 flex flex-col gap-6 pb-[140px]">
+        <div className="flex-1 overflow-y-auto chat-scroll p-4 md:p-8 flex flex-col gap-6 pb-[180px] md:pb-[200px]">
           
           {!activeSession && (
             <div className="flex flex-col items-center justify-center h-full text-on-surface-variant opacity-70">
