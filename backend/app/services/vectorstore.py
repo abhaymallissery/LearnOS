@@ -3,7 +3,7 @@ Wraps ChromaDB (via LangChain) so every uploaded document becomes part of the
 user's permanent, searchable personal library. Embeddings are produced via
 Google Gemini API (models/embedding-001).
 """
-from langchain_community.vectorstores import Chroma
+from langchain_postgres.vectorstores import PGVector
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document as LCDocument
@@ -31,10 +31,14 @@ def get_embeddings():
 def get_vectorstore():
     global _store
     if _store is None:
-        _store = Chroma(
+        db_url = settings.DATABASE_URL or settings.SQLITE_URL
+        if db_url and db_url.startswith("postgres://"):
+            db_url = db_url.replace("postgres://", "postgresql://", 1)
+        _store = PGVector(
             collection_name="learnos_collection_v2",
-            embedding_function=get_embeddings(),
-            persist_directory=settings.CHROMA_DIR
+            connection=db_url,
+            embeddings=get_embeddings(),
+            use_jsonb=True,
         )
     return _store
 
@@ -95,6 +99,9 @@ def semantic_search(query: str, k: int = 5, document_ids: list[str] | None = Non
 def delete_document_vectors(document_id: str):
     store = get_vectorstore()
     try:
-        store._collection.delete(where={"document_id": document_id})
+        from sqlalchemy import text
+        with store._make_sync_session() as session:
+            session.execute(text("DELETE FROM langchain_pg_embedding WHERE cmetadata->>'document_id' = :doc_id"), {"doc_id": document_id})
+            session.commit()
     except Exception:
         pass

@@ -38,3 +38,5 @@ beautifulsoup4>=4.12.3
 youtube-transcript-api>=0.6.2
 psycopg2-binary>=2.9.9
 deep-translator
+pgvector
+langchain-postgres
