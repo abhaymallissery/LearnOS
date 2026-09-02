@@ -22,7 +22,8 @@ def get_embeddings():
                 from langchain_google_genai import GoogleGenerativeAIEmbeddings
                 _embeddings = GoogleGenerativeAIEmbeddings(
                     model="models/text-embedding-004",
-                    google_api_key=settings.GEMINI_API_KEY
+                    google_api_key=settings.GEMINI_API_KEY,
+                    max_retries=0
                 )
             else:
                 _embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
@@ -69,20 +70,10 @@ def index_document(document_id: str, subject_id: str, title: str, text: str):
 
     store = get_vectorstore()
     if docs:
-        import time
-        batch_size = 20
+        batch_size = 150
         for i in range(0, len(docs), batch_size):
             batch = docs[i:i + batch_size]
-            retries = 3
-            for attempt in range(retries):
-                try:
-                    store.add_documents(batch)
-                    break
-                except Exception as e:
-                    if attempt == retries - 1:
-                        raise e
-                    print(f"Embedding batch failed (attempt {attempt+1}/{retries}): {e}. Retrying in 2s...")
-                    time.sleep(2)
+            store.add_documents(batch)
     return len(docs)
 
 
